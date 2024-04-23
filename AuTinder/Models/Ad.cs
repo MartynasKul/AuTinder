@@ -21,6 +21,7 @@
             Description = description;
             Price = price;
             Car = car;
+            IsOrdered=false;
         }
 
         #endregion
