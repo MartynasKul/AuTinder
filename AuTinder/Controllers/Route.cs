@@ -4,11 +4,11 @@ using System.Diagnostics;
 
 namespace AuTinder.Controllers
 {
-    public class HomeController : Controller
+    public class Route : Controller
     {
-        private readonly ILogger<HomeController> _logger;
+        private readonly ILogger<Route> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public Route(ILogger<Route> logger)
         {
             _logger = logger;
         }
@@ -19,6 +19,18 @@ namespace AuTinder.Controllers
         }
 
         public IActionResult Privacy()
+        {
+            return View();
+        }
+        public IActionResult AdCreation() 
+        {
+            return View();
+        }
+        public IActionResult Ad() 
+        {
+            return View();
+        }
+        public IActionResult AdDelete() 
         {
             return View();
         }
