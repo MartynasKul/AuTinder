@@ -1,0 +1,62 @@
+﻿@model AuTinder.Models.Ad
+
+@{
+    ViewData["Title"] = "Edit Ad";
+}
+
+<h1>Edit Ad</h1>
+
+<h4>Ad Details</h4>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form asp-action="EditAd" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+            <div class="form-group">
+                <label asp-for="Description" class="control-label"></label>
+                <input asp-for="Description" class="form-control" />
+                <span asp-validation-for="Description" class="text-danger"></span>
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Price" class="control-label"></label>
+                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                <span asp-validation-for="Price" class="text-danger"></span>
+            </div>
+
+            <div class="form-group form-check">
+                <input asp-for="IsOrdered" class="form-check-input" />
+                <label asp-for="IsOrdered" class="form-check-label"></label>
+            </div>
+
+            <!-- Car details editing -->
+            <h4>Car Details</h4>
+            <div class="form-group">
+                <label asp-for="Car.Make" class="control-label"></label>
+                <input asp-for="Car.Make" class="form-control" />
+            </div>
+
+            <div class="form-group">
+                <label asp-for="Car.Model" class="control-label"></label>
+                <input asp-for="Car.Model" class="form-control" />
+            </div>
+
+            <!-- Add more fields as needed for other car properties -->
+
+            <div class="form-group">
+                <input type="submit" value="Save Changes" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
