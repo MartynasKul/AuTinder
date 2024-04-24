@@ -79,7 +79,7 @@ namespace AuTinder.Controllers
                 }
             }
 
-            return RedirectToAction("Index", "Route");
+            return RedirectToAction("AdList", "Route");
         }
         public IActionResult Ad(Ad ad) 
         {
