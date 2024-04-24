@@ -16,6 +16,16 @@ namespace AuTinder.Controllers
 
         public IActionResult Index()
         {
+            // Retrieve message from TempData
+            if (TempData.ContainsKey("Message"))
+            {
+                ViewBag.Message = TempData["Message"];
+            }
+            else
+            {
+                ViewBag.Message = ""; // Set a default value if TempData["Message"] is not found
+            }
+
             return View();
         }
 
@@ -61,7 +71,7 @@ namespace AuTinder.Controllers
                         ad.IsOrdered
                     );
 
-                    ViewBag.Message = "Ad and car successfully added!";
+                    TempData["Message"] = "Ad and car successfully added!";
                 }
                 catch (Exception ex)
                 {
@@ -69,7 +79,7 @@ namespace AuTinder.Controllers
                 }
             }
 
-            return View(ad);
+            return RedirectToAction("Index", "Route");
         }
         public IActionResult Ad(Ad ad) 
         {
