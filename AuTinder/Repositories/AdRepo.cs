@@ -10,13 +10,13 @@ public class AdRepo
      int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating,
      string description, decimal price, bool isOrdered)
     {
-        int carId = InsertCar(make, model, bodyType, year, fuelType, mileage, color, inspection, driveWheels, gearbox,
+        long carId = InsertCar(make, model, bodyType, year, fuelType, mileage, color, inspection, driveWheels, gearbox,
                               power, steeringWheelLocation, outsideState, extraFunc, rating);
 
         InsertAd(description, price, isOrdered, carId);
     }
 
-    private static int InsertCar(string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
+    private static long InsertCar(string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
      int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
      int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating)
     {
@@ -26,7 +26,7 @@ public class AdRepo
         int gearBox = GetGearboxIdFromEnum(gearbox);
         int steeringwheellocation = GetSteeringIdFromEnum(steeringWheelLocation);
 
-        int carId = 0; // Initialize carId variable
+        long carId = 0; // Initialize carId variable
         // Construct the SQL query for inserting into the Car table
         string carQuery = $@"INSERT INTO car (make, model, fk_vechicle_type, year, fk_fuel_type, milage, color, technical_inspection, fk_drive_types, fk_gear_box, power, fk_wheel_position, outside_condition, additional_functions, value)                  
                         VALUES (?make, ?model, ?fk_vechicle_type, ?year, ?fk_fuel_type, ?milage, ?color, ?technical_inspection, ?fk_drive_types, ?fk_gear_box, ?power, ?fk_wheel_position, ?outside_condition, ?additional_functions, ?value);
@@ -34,7 +34,7 @@ public class AdRepo
 
 
         // Add the parameters to the SQL query
-        Sql.Insertt(carQuery, args =>
+        carId = Sql.Insert(carQuery, args =>
         {
             args.Add("?make", make);
             args.Add("?model", model);
@@ -51,17 +51,11 @@ public class AdRepo
             args.Add("?outside_condition", outsideState);
             args.Add("?additional_functions", extraFunc);
             args.Add("?value", rating);
-        },reader =>
-        {
-            if (reader.Read())
-            {
-                carId = Convert.ToInt32(reader[0]);
-            }
         });
         return carId; // Return the car ID
     }
 
-    private static void InsertAd(string description, decimal price, bool isOrdered, int carId)
+    private static void InsertAd(string description, decimal price, bool isOrdered, long carId)
     {
         string adQuery = $@"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user)
                            VALUES (?Description, ?Price, ?Ordered, ?Fk_Car, ?fk_user);";
