@@ -1,4 +1,4 @@
-﻿using AuTinder.Models;
+using AuTinder.Models;
 using Microsoft.Extensions.Configuration;
 using System.Data.SqlClient;
 using System.IO;
@@ -6,69 +6,68 @@ using System.IO;
 public class AdRepo
 {
     public static void InsertCarAndAd(string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
-        int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
-        int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating,
-        string description, decimal price, bool isOrdered)
+     int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
+     int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating,
+     string description, decimal price, bool isOrdered)
     {
-        IConfiguration configuration = new ConfigurationBuilder()
-            .SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json")
-            .Build();
+        int carId = InsertCar(make, model, bodyType, year, fuelType, mileage, color, inspection, driveWheels, gearbox,
+                              power, steeringWheelLocation, outsideState, extraFunc, rating);
 
-        string connectionString = configuration.GetConnectionString("DbConnStr");
+        InsertAd(description, price, isOrdered, carId);
+    }
 
-        int carId;
-
+    private static int InsertCar(string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
+     int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
+     int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating)
+    {
+        int carId = 0; // Initialize carId variable
         // Construct the SQL query for inserting into the Car table
         string carQuery = @"INSERT INTO car (make, model, fk_vechicle_type, year, fk_fuel_type, milage, color, technical_inspection, fk_drive_types, fk_gear_box, power, fk_wheel_position, outside_condition, additional_functions, value)                  
                         VALUES (@make, @model, @fk_vechicle_type, @year, @fk_fuel_type, @milage, @color, @technical_inspection, @fk_drive_types, @fk_gear_box, @power, @fk_wheel_position, @outside_condition, @additional_functions, @value);
-                        SELECT SCOPE_IDENTITY();"; // Retrieve the ID of the newly inserted car record
+                        SELECT SCOPE_IDENTITY()";
 
-        // Execute the query to insert into Car table and retrieve the ID of the newly inserted record
-        using (var connection = new SqlConnection(connectionString))
+
+        // Add the parameters to the SQL query
+        Sql.Insertt(carQuery, args =>
         {
-            connection.Open();
-            using (var command = new SqlCommand(carQuery, connection))
+            args.Add("?make", make);
+            args.Add("?model", model);
+            args.Add("?fk_vechicle_type", bodyType); // Assuming you have a foreign key for body type
+            args.Add("?year", year);
+            args.Add("?fk_fuel_type", fuelType); // Assuming you have a foreign key for fuel type
+            args.Add("?milage", mileage);
+            args.Add("?color", color);
+            args.Add("?technical_inspection", inspection);
+            args.Add("?fk_drive_types", driveWheels); // Assuming you have a foreign key for drive wheels
+            args.Add("?fk_gear_box", gearbox); // Assuming you have a foreign key for gearbox
+            args.Add("?power", power);
+            args.Add("?fk_wheel_position", steeringWheelLocation); // Assuming you have a foreign key for wheel position
+            args.Add("?outside_condition", outsideState);
+            args.Add("?additional_functions", extraFunc);
+            args.Add("?value", rating);
+        },reader =>
+        {
+            if (reader.Read())
             {
-                command.Parameters.AddWithValue("@make", make);
-                command.Parameters.AddWithValue("@model", model);
-                command.Parameters.AddWithValue("@fk_vechicle_type", bodyType.ToString());
-                command.Parameters.AddWithValue("@year", year);
-                command.Parameters.AddWithValue("@fk_fuel_type", fuelType.ToString());
-                command.Parameters.AddWithValue("@milage", mileage);
-                command.Parameters.AddWithValue("@color", color);
-                command.Parameters.AddWithValue("@technical_inspection", inspection);
-                command.Parameters.AddWithValue("@fk_drive_types", driveWheels.ToString());
-                command.Parameters.AddWithValue("@fk_gear_box", gearbox.ToString());
-                command.Parameters.AddWithValue("@power", power);
-                command.Parameters.AddWithValue("@fk_wheel_position", steeringWheelLocation.ToString());
-                command.Parameters.AddWithValue("@outside_condition", outsideState);
-                command.Parameters.AddWithValue("@additional_functions", extraFunc);
-                command.Parameters.AddWithValue("@value", rating);
-
-                // Execute the query and retrieve the newly inserted car ID
-                carId = Convert.ToInt32(command.ExecuteScalar());
+                carId = Convert.ToInt32(reader[0]);
             }
-        }
+        });
+        return carId; // Return the car ID
+    }
 
-        // Construct the SQL query for inserting into the Ad table
+    private static void InsertAd(string description, decimal price, bool isOrdered, int carId)
+    {
         string adQuery = @"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user)
-                        VALUES (@Description, @Price, @Ordered, @Fk_Car, @fk_user);";
+                           VALUES (@Description, @Price, @Ordered, @Fk_Car, @fk_user);";
 
         // Execute the query to insert into Ad table
-        using (var connection = new SqlConnection(connectionString))
+        Sql.Insert(adQuery, args =>
         {
-            connection.Open();
-            using (var command = new SqlCommand(adQuery, connection))
-            {
-                command.Parameters.AddWithValue("@Description", description);
-                command.Parameters.AddWithValue("@Price", price);
-                command.Parameters.AddWithValue("@Ordered", isOrdered);
-                command.Parameters.AddWithValue("@Fk_Car", carId);
-                command.Parameters.AddWithValue("@fk_user", 1); // Assuming fk_user is a foreign key to the user table
-
-                command.ExecuteNonQuery();
-            }
-        }
+            args.Add("@Description", description);
+            args.Add("@Price", price);
+            args.Add("@Ordered", isOrdered);
+            args.Add("@Fk_Car", carId);
+            args.Add("@fk_user", 1); // Assuming fk_user is a foreign key to the user table
+        });
     }
 }
