@@ -2,6 +2,7 @@
 {
     public class Ad
     {
+        public int ID { get; set; }
         public string Description {  get; set; }
         public decimal Price { get; set; }
         public bool IsOrdered { get; set; }
@@ -9,15 +10,17 @@
 
         #region Constructors
         public Ad() { }
-        public Ad(string description, decimal price, bool isOrdered, Car car) 
+        public Ad(int id, string description, decimal price, bool isOrdered, Car car) 
         {
+            ID = id;
             Description = description;
             Price = price;
             IsOrdered = isOrdered;
             Car = car;
         }
-        public Ad(string description, decimal price, Car car) 
+        public Ad(int id, string description, decimal price, Car car) 
         {
+            ID = id;
             Description = description;
             Price = price;
             Car = car;
