@@ -81,12 +81,14 @@ namespace AuTinder.Controllers
 
             return RedirectToAction("AdList", "Route");
         }
-        public IActionResult Ad(Ad ad) 
+        public IActionResult Ad(int id) 
         {
+            Ad ad = AdRepo.GetAdAndCarById(id);
             return View(ad);
         }
-        public IActionResult AdDelete(Ad ad) 
+        public IActionResult AdDelete(int id) 
         {
+            Ad ad = AdRepo.GetAdAndCarById(id);
             return View(ad);
         }
         public IActionResult AdList() 
@@ -217,20 +219,56 @@ namespace AuTinder.Controllers
             List<Ad> ads = AdRepo.GetAllAdsAndCars();
             return View(ads);
         }
-        public IActionResult AdEdit(Ad ad) 
+        public IActionResult AdEdit(int id) 
         {
-
-            if (ModelState.IsValid) 
-            {
-                //SaveAd(ad);
-                return RedirectToAction("Index");
-            }
+            Ad ad = AdRepo.GetAdAndCarById(id);
+            //if (ModelState.IsValid) 
+            //{
+            //    //SaveAd(ad);
+            //    return RedirectToAction("Index");
+            //}
             return View(ad);
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        public IActionResult Edit(Ad ad)
+        {
+            AdRepo.UpdateCarAndAd(
+                        ad.ID,
+                        ad.Car.Id,
+                        ad.Car.Make,
+                        ad.Car.Model,
+                        ad.Car.BodyType,
+                        ad.Car.Year,
+                        ad.Car.FuelType,
+                        ad.Car.Mileage,
+                        ad.Car.Color,
+                        ad.Car.Inspection,
+                        ad.Car.DriveWheels,
+                        ad.Car.Gearbox,
+                        ad.Car.Power,
+                        ad.Car.SteeringWheelLocation,
+                        ad.Car.OutsideState,
+                        ad.Car.ExtraFunc,
+                        ad.Car.Rating,
+                        ad.Description,
+                        ad.Price,
+                        ad.IsOrdered
+                    );
+            return RedirectToAction("AdList", "Route");
+        }
+
+        public IActionResult Delete(int id)
+        {
+            Ad ad = AdRepo.GetAdAndCarById(id);
+
+            AdRepo.DeleteAd(id, ad.Car.Id);
+            return RedirectToAction("AdList", "Route");
         }
     }
 }

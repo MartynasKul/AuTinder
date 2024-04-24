@@ -45,9 +45,9 @@
             <!-- Add more car details as needed -->
         </dl>
         <div>
-            @Html.ActionLink("Edit", "AdEdit", ad) |
-            @Html.ActionLink("Details", "Ad", ad) |
-            @Html.ActionLink("Delete", "AdDelete", ad) |
+            @Html.ActionLink("Edit", "AdEdit", new { id = ad.ID }) |
+            @Html.ActionLink("Details", "Ad", new { id = ad.ID }) |
+            @Html.ActionLink("Delete", "AdDelete", new { id = ad.ID }) |
             <a asp-action="Index">Back to List</a>
         </div>
     </div>
