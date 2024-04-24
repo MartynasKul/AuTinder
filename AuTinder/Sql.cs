@@ -232,8 +232,14 @@ class Sql
 					return;
 				}
 
-				//unsupported source type
-				throw new Exception($"Source type '{typeof(T)}' is not supported in 'paramValue'.");
+                if (typeof(T).IsEnum)
+                {
+                    pars.Add(argName, MySqlDbType.Int32).Value = Convert.ToInt32(argValue);
+                    return;
+                }
+
+                //unsupported source type
+                throw new Exception($"Source type '{typeof(T)}' is not supported in 'paramValue'.");
 			}
 		}
 	}
