@@ -1,5 +1,6 @@
 using AuTinder.Models;
 using Microsoft.Extensions.Configuration;
+using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 
@@ -182,5 +183,46 @@ public class AdRepo
             default:
                 throw new ArgumentException("Unknown fuel type.");
         }
+    }
+
+    public static List<Ad> GetAllAdsAndCars()
+    {
+        string query = @"
+        SELECT a.Id, a.Description, a.Price, a.Ordered, 
+               c.id AS CarId, c.make, c.model, c.fk_vechicle_type, c.year, c.fk_fuel_type, c.milage, c.color, 
+               c.technical_inspection, c.fk_drive_types, c.fk_gear_box, c.power, c.fk_wheel_position, 
+               c.outside_condition, c.additional_functions, c.value
+        FROM ad a
+        JOIN car c ON a.Fk_Car = c.id;";
+
+        var rows = Sql.Query(query);
+        var adsWithCars = Sql.MapAll<Ad>(rows, (extractor, item) =>
+        {
+            item.ID= extractor.From<int>("Id");
+            item.Description = extractor.From<string>("Description");
+            item.Price = extractor.From<decimal>("Price");
+            item.IsOrdered = extractor.From<bool>("Ordered");
+            item.Car = new Car
+            {
+                Id = extractor.From<int>("CarId"),
+                Make = extractor.From<string>("make"),
+                Model = extractor.From<string>("model"),
+                BodyType = extractor.From<BodyType>("fk_vechicle_type"),
+                Year = extractor.From<DateTime>("year"),
+                FuelType = extractor.From<FuelType>("fk_fuel_type"),
+                Mileage = extractor.From<int>("milage"),
+                Color = extractor.From<string>("color"),
+                Inspection = extractor.From<DateTime>("technical_inspection"),
+                DriveWheels = extractor.From<DriveWheels>("fk_drive_types"),
+                Gearbox = extractor.From<Gearbox>("fk_gear_box"),
+                Power = extractor.From<int>("power"),
+                SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position"),
+                OutsideState = extractor.From<string>("outside_condition"),
+                ExtraFunc = extractor.From<string>("additional_functions"),
+                Rating = extractor.From<int>("value")
+            };
+        });
+
+        return adsWithCars;
     }
 }
