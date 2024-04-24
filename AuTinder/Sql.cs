@@ -267,39 +267,80 @@ class Sql
 		}            
 	}
 
-	/// <summary>
-	/// Execute INSERT statement.
-	/// </summary>
-	/// <param name="statement">Statement to execute.</param>
-	/// <param name="args">Argument binder.</param>
-	/// <returns>Autoincrementable ID of the last record created, if any.</returns>
-	public static long Insert(string statement, Action<CommandArgumentSetter> args = null)
-	{
-		var dbConnStr = Config.DBConnStr;
+    /// <summary>
+    /// Execute INSERT statement.
+    /// </summary>
+    /// <param name="statement">Statement to execute.</param>
+    /// <param name="args">Argument binder.</param>
+    /// <returns>Autoincrementable ID of the last record created, if any.</returns>
+    public static void Insertt(string statement, Action<CommandArgumentSetter> args, Action<MySqlDataReader> callback)
+    {
+        var dbConnStr = Config.DBConnStr;
 
-		using( var dbCon = new MySqlConnection(dbConnStr) )
-		using( var dbCmd = new MySqlCommand(statement, dbCon) )
-		{
-			if( args != null)
-			{
-				var cas = new CommandArgumentSetter(dbCmd);
-				args(cas);
-			}
+        using (var dbCon = new MySqlConnection(dbConnStr))
+        using (var dbCmd = new MySqlCommand(statement, dbCon))
+        {
+            if (args != null)
+            {
+                var cas = new CommandArgumentSetter(dbCmd);
+                args(cas);
+            }
 
-			dbCon.Open();
-			var numRowsAffected = dbCmd.ExecuteNonQuery();
+            dbCon.Open();
+            dbCmd.ExecuteNonQuery();
 
-			return dbCmd.LastInsertedId;
-		}            
-	}
+            // Execute the callback if provided
+            if (callback != null)
+            {
+                using (var reader = dbCmd.ExecuteReader())
+                {
+                    callback(reader);
+                }
+            }
+        }
+    }
 
-	/// <summary>
-	/// Execute UPDATE statement.
-	/// </summary>
-	/// <param name="statement">Statement to execute.</param>
-	/// <param name="args">Argument binder.</param>
-	/// <returns>Number of rows affected.</returns>
-	public static int Update(string statement, Action<CommandArgumentSetter> args = null)
+
+    public static long Insert(string statement, Action<CommandArgumentSetter> args = null)
+    {
+        var dbConnStr = Config.DBConnStr;
+
+        using (var dbCon = new MySqlConnection(dbConnStr))
+        using (var dbCmd = new MySqlCommand(statement, dbCon))
+        {
+            if (args != null)
+            {
+                var cas = new CommandArgumentSetter(dbCmd);
+                args(cas);
+            }
+
+            dbCon.Open();
+            var numRowsAffected = dbCmd.ExecuteNonQuery();
+
+            // Get the last inserted ID
+            dbCmd.CommandText = "SELECT LAST_INSERT_ID();";
+            var lastInsertedId = dbCmd.ExecuteScalar();
+
+            if (lastInsertedId != null && lastInsertedId != DBNull.Value)
+            {
+                return Convert.ToInt64(lastInsertedId);
+            }
+            else
+            {
+                throw new InvalidOperationException("Failed to retrieve last inserted ID.");
+            }
+        }
+    }
+
+
+
+    /// <summary>
+    /// Execute UPDATE statement.
+    /// </summary>
+    /// <param name="statement">Statement to execute.</param>
+    /// <param name="args">Argument binder.</param>
+    /// <returns>Number of rows affected.</returns>
+    public static int Update(string statement, Action<CommandArgumentSetter> args = null)
 	{
 		var dbConnStr = Config.DBConnStr;
 
