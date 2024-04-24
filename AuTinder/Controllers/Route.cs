@@ -35,7 +35,7 @@ namespace AuTinder.Controllers
         [ValidateAntiForgeryToken]
         public IActionResult AdCreation(Ad ad)
         {
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
             {
                 try
                 {
