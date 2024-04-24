@@ -23,9 +23,53 @@ namespace AuTinder.Controllers
         {
             return View();
         }
-        public IActionResult AdCreation() 
+      
+        // GET: Ad/AdCreation
+        public IActionResult AdCreation()
         {
             return View();
+        }
+
+        // POST: Ad/AdCreation
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult AdCreation(Ad ad)
+        {
+            if (ModelState.IsValid)
+            {
+                try
+                {
+                    // Call the static method from the class name
+                    AdRepo.InsertCarAndAd(
+                        ad.Car.Make,
+                        ad.Car.Model,
+                        ad.Car.BodyType,
+                        ad.Car.Year,
+                        ad.Car.FuelType,
+                        ad.Car.Mileage,
+                        ad.Car.Color,
+                        ad.Car.Inspection,
+                        ad.Car.DriveWheels,
+                        ad.Car.Gearbox,
+                        ad.Car.Power,
+                        ad.Car.SteeringWheelLocation,
+                        ad.Car.OutsideState,
+                        ad.Car.ExtraFunc,
+                        ad.Car.Rating,
+                        ad.Description,
+                        ad.Price,
+                        ad.IsOrdered
+                    );
+
+                    ViewBag.Message = "Ad and car successfully added!";
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.Message = $"Error adding ad and car: {ex.Message}";
+                }
+            }
+
+            return View(ad);
         }
         public IActionResult Ad(Ad ad) 
         {
