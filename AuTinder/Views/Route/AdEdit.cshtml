@@ -6,46 +6,103 @@
 
 <h1>Edit Ad</h1>
 
-<h4>Ad Details</h4>
+<h4>Ad information</h4>
 <hr />
 <div class="row">
-    <div class="col-md-6">
-        <form asp-action="EditAd" method="post">
+    <div class="col-md-4">
+        <form asp-action="Edit" method="post">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="ID" />  <!-- Assuming you have an Id field in your Ad model to uniquely identify the record -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-
             <div class="form-group">
                 <label asp-for="Description" class="control-label"></label>
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Price" class="control-label"></label>
-                <input asp-for="Price" class="form-control" type="number" step="0.01" />
+                <input asp-for="Price" class="form-control" />
                 <span asp-validation-for="Price" class="text-danger"></span>
             </div>
-
             <div class="form-group form-check">
-                <input asp-for="IsOrdered" class="form-check-input" />
-                <label asp-for="IsOrdered" class="form-check-label"></label>
+                <label class="form-check-label">
+                    <input class="form-check-input" asp-for="IsOrdered" /> @Html.DisplayNameFor(model => model.IsOrdered)
+                </label>
             </div>
-
-            <!-- Car details editing -->
-            <h4>Car Details</h4>
+            <!-- Additional Car Fields -->
+            <h4>Car Information</h4>
+            <hr />
+            @* Assuming Car is a complex object in your Ad model *@
             <div class="form-group">
                 <label asp-for="Car.Make" class="control-label"></label>
                 <input asp-for="Car.Make" class="form-control" />
+                <span asp-validation-for="Car.Make" class="text-danger"></span>
             </div>
-
             <div class="form-group">
                 <label asp-for="Car.Model" class="control-label"></label>
                 <input asp-for="Car.Model" class="form-control" />
+                <span asp-validation-for="Car.Model" class="text-danger"></span>
             </div>
-
-            <!-- Add more fields as needed for other car properties -->
-
             <div class="form-group">
-                <input type="submit" value="Save Changes" class="btn btn-primary" />
+                <label asp-for="Car.BodyType" class="control-label"></label>
+                <select asp-for="Car.BodyType" asp-items="@Html.GetEnumSelectList<AuTinder.Models.BodyType>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Year" class="control-label"></label>
+                <input asp-for="Car.Year" class="form-control" />
+                <span asp-validation-for="Car.Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.FuelType" class="control-label"></label>
+                <select asp-for="Car.FuelType" asp-items="@Html.GetEnumSelectList<AuTinder.Models.FuelType>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Mileage" class="control-label"></label>
+                <input asp-for="Car.Mileage" class="form-control" />
+                <span asp-validation-for="Car.Mileage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Color" class="control-label"></label>
+                <input asp-for="Car.Color" class="form-control" />
+                <span asp-validation-for="Car.Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Inspection" class="control-label"></label>
+                <input asp-for="Car.Inspection" class="form-control" />
+                <span asp-validation-for="Car.Inspection" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.DriveWheels" class="control-label"></label>
+                <select asp-for="Car.DriveWheels" asp-items="@Html.GetEnumSelectList<AuTinder.Models.DriveWheels>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Gearbox" class="control-label"></label>
+                <select asp-for="Car.Gearbox" asp-items="@Html.GetEnumSelectList<AuTinder.Models.Gearbox>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Power" class="control-label"></label>
+                <input asp-for="Car.Power" class="form-control" />
+                <span asp-validation-for="Car.Power" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.SteeringWheelLocation" class="control-label"></label>
+                <select asp-for="Car.SteeringWheelLocation" asp-items="@Html.GetEnumSelectList<AuTinder.Models.SteeringWheelLocation>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.OutsideState" class="control-label"></label>
+                <input asp-for="Car.OutsideState" class="form-control" />
+                <span asp-validation-for="Car.OutsideState" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.ExtraFunc" class="control-label"></label>
+                <input asp-for="Car.ExtraFunc" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label asp-for="Car.Rating" class="control-label"></label>
+                <input asp-for="Car.Rating" class="form-control" readonly />
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Save changes" class="btn btn-success" />
             </div>
         </form>
     </div>
