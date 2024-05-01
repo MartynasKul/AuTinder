@@ -135,6 +135,20 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Edit", "AdEdit", Model) |
-    <a asp-action="Index">Back to List</a>
+    @Html.ActionLink("Edit", "ShowEditAd", new { id = Model.ID }) |
+    <form asp-controller="Ad" asp-action="DeleteAd" method="post" id="deleteForm">
+        <input type="hidden" name="id" value="@Model.ID" />
+        <button type="button" onclick="confirmDelete('@Model.Car.Make', '@Model.Car.Model', '@Model.ID')">Delete</button>
+    </form>
+    <a asp-action="ShowAdList" asp-controller="Route">Back to List</a>
 </div>
+
+<script>
+    function confirmDelete(make, model, id) {
+        if (confirm("Are you sure you want to delete the ad for " + make + " " + model + "?")) {
+            document.getElementById('deleteForm').submit();
+        } else {
+            window.location.href = '@Url.Action("ShowAdList", "Route")';
+        }
+    }
+</script>

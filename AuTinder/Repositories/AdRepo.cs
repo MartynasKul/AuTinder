@@ -296,7 +296,7 @@ public class AdRepo
         }
     }
 
-    public static List<Ad> GetAllAdsAndCars()
+    public static List<Ad> GetAllAds()
     {
         string query = @"
         SELECT a.Id, a.Description, a.Price, a.Ordered, 

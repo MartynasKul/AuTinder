@@ -8,9 +8,11 @@ namespace AuTinder.Controllers
     public class Route : Controller
     {
         private readonly ILogger<Route> _logger;
+        private AdController _adController;
 
         public Route(ILogger<Route> logger)
         {
+            _adController = new AdController();
             _logger = logger;
         }
 
@@ -33,65 +35,21 @@ namespace AuTinder.Controllers
         {
             return View();
         }
-      
+
         // GET: Ad/AdCreation
-        public IActionResult AdCreation()
+        public IActionResult ShowCreateAd()
         {
-            return View();
+            return View("AdCreateView");
         }
 
-        // POST: Ad/AdCreation
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult AdCreation(Ad ad)
-        {
-            if (ModelState.IsValid)
-            {
-                try
-                {
-                    // Call the static method from the class name
-                    AdRepo.InsertCarAndAd(
-                        ad.Car.Make,
-                        ad.Car.Model,
-                        ad.Car.BodyType,
-                        ad.Car.Year,
-                        ad.Car.FuelType,
-                        ad.Car.Mileage,
-                        ad.Car.Color,
-                        ad.Car.Inspection,
-                        ad.Car.DriveWheels,
-                        ad.Car.Gearbox,
-                        ad.Car.Power,
-                        ad.Car.SteeringWheelLocation,
-                        ad.Car.OutsideState,
-                        ad.Car.ExtraFunc,
-                        ad.Car.Rating,
-                        ad.Description,
-                        ad.Price,
-                        ad.IsOrdered
-                    );
-
-                    TempData["Message"] = "Ad and car successfully added!";
-                }
-                catch (Exception ex)
-                {
-                    ViewBag.Message = $"Error adding ad and car: {ex.Message}";
-                }
-            }
-
-            return RedirectToAction("AdList", "Route");
-        }
-        public IActionResult Ad(int id) 
+        
+        public IActionResult Ad(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
             return View(ad);
         }
-        public IActionResult AdDelete(int id) 
-        {
-            Ad ad = AdRepo.GetAdAndCarById(id);
-            return View(ad);
-        }
-        public IActionResult AdList() 
+        
+        public IActionResult ShowAdList()
         {
             //List<Ad> ads = new List<Ad>
             //{
@@ -216,10 +174,13 @@ namespace AuTinder.Controllers
             //        }
             //    }
             //};
-            List<Ad> ads = AdRepo.GetAllAdsAndCars();
-            return View(ads);
+            //List<Ad> ads = AdRepo.GetAllAdsAndCars();
+            
+            List<Ad> ads = _adController.GetAds();
+            Console.WriteLine(1);
+            return View("AdLIst", ads);
         }
-        public IActionResult AdEdit(int id) 
+        public IActionResult ShowEditAd(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
             //if (ModelState.IsValid) 
@@ -227,7 +188,7 @@ namespace AuTinder.Controllers
             //    //SaveAd(ad);
             //    return RedirectToAction("Index");
             //}
-            return View(ad);
+            return View("AdEdit", ad);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
@@ -236,31 +197,15 @@ namespace AuTinder.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
-        public IActionResult Edit(Ad ad)
+        public IActionResult AdEdit(Ad ad)
         {
-            AdRepo.UpdateCarAndAd(
-                        ad.ID,
-                        ad.Car.Id,
-                        ad.Car.Make,
-                        ad.Car.Model,
-                        ad.Car.BodyType,
-                        ad.Car.Year,
-                        ad.Car.FuelType,
-                        ad.Car.Mileage,
-                        ad.Car.Color,
-                        ad.Car.Inspection,
-                        ad.Car.DriveWheels,
-                        ad.Car.Gearbox,
-                        ad.Car.Power,
-                        ad.Car.SteeringWheelLocation,
-                        ad.Car.OutsideState,
-                        ad.Car.ExtraFunc,
-                        ad.Car.Rating,
-                        ad.Description,
-                        ad.Price,
-                        ad.IsOrdered
-                    );
-            return RedirectToAction("AdList", "Route");
+            bool DataGood = _adController.CheckAdData(ad);
+            if (DataGood)
+            {
+                _adController.UpdateAddInfo(ad);
+            }
+            
+            return RedirectToAction("ShowAdList", "Route");
         }
 
         public IActionResult Delete(int id)
@@ -270,5 +215,11 @@ namespace AuTinder.Controllers
             AdRepo.DeleteAd(id, ad.Car.Id);
             return RedirectToAction("AdList", "Route");
         }
+
+        public IActionResult OpenProfile()
+        {
+            return View("ProfileView");
+        }
+
     }
 }
