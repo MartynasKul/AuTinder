@@ -11,7 +11,7 @@
         @ViewBag.Message
     </div>
 }
-
+<a class="nav-link text-dark" asp-area="" asp-controller="Route" asp-action="ShowCreateAd">Create Ad</a>
 @foreach (Ad ad in Model)
 {
     <div>
@@ -45,10 +45,8 @@
             <!-- Add more car details as needed -->
         </dl>
         <div>
-            @Html.ActionLink("Edit", "AdEdit", new { id = ad.ID }) |
             @Html.ActionLink("Details", "Ad", new { id = ad.ID }) |
-            @Html.ActionLink("Delete", "AdDelete", new { id = ad.ID }) |
-            <a asp-action="Index">Back to List</a>
+            @* <a asp-action="Index">Back to List</a> *@
         </div>
     </div>
 

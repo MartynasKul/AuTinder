@@ -10,7 +10,7 @@
 <hr />
 <div class="row">
     <div class="col-md-4">
-        <form asp-action="Edit" method="post">
+        <form asp-action="AdEdit" method="post">
             @Html.AntiForgeryToken()
             <input type="hidden" asp-for="ID" />  <!-- Assuming you have an Id field in your Ad model to uniquely identify the record -->
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
