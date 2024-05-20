@@ -31,8 +31,8 @@
         </dd>
     </dl>
     
-    <form asp-action="AdDelete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <div>
+        @Html.ActionLink("Delete", "Delete", new { id = Model.ID }) |
         <a asp-action="Index">Back to List</a>
-    </form>
+    </div>
 </div>

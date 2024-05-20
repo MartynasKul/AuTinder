@@ -114,9 +114,44 @@ class Sql
 				//string
 				if( typeof(T) == typeof(string) )
 					return (T)(object)Convert.ToString(attr);
+                {
+                    if (typeof(T).IsEnum)
+                    {
+                        if (attr is string)
+                            return (T)Enum.Parse(typeof(T), (string)attr); // Handle enums stored as strings
+                        else
+                            return (T)Enum.ToObject(typeof(T), attr); // Handle enums stored as integers
+                    }
 
-				//unsupported target type
-				throw new Exception($"Target type '{typeof(T)}' is not supported in '<T>'.");
+                    switch (Type.GetTypeCode(typeof(T)))
+                    {
+                        case TypeCode.Byte:
+                            return (T)(object)Convert.ToByte(attr);
+                        case TypeCode.Int16:
+                            return (T)(object)Convert.ToInt16(attr);
+                        case TypeCode.Int32:
+                            return (T)(object)Convert.ToInt32(attr);
+                        case TypeCode.Int64:
+                            return (T)(object)Convert.ToInt64(attr);
+                        case TypeCode.Boolean:
+                            return (T)(object)Convert.ToBoolean(attr);
+                        case TypeCode.Double:
+                            return (T)(object)Convert.ToDouble(attr);
+                        case TypeCode.Single:
+                            return (T)(object)Convert.ToSingle(attr);
+                        case TypeCode.Decimal:
+                            return (T)(object)Convert.ToDecimal(attr);
+                        case TypeCode.DateTime:
+                            return (T)(object)Convert.ToDateTime(attr);
+                        case TypeCode.String:
+                            return (T)(object)Convert.ToString(attr);
+                        default:
+                            throw new NotSupportedException($"Conversion for type {typeof(T)} is not supported.");
+                    }
+                }
+
+                //unsupported target type
+                throw new Exception($"Target type '{typeof(T)}' is not supported in '<T>'.");
 			}
 		}
 	}
