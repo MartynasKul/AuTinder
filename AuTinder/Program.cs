@@ -1,3 +1,5 @@
+using AuTinder.Views;
+
 namespace AuTinder
 {
     public class Program
@@ -19,6 +21,8 @@ namespace AuTinder
                 options.IdleTimeout = TimeSpan.FromSeconds(3600);
             });
 
+            // Add PartsTechView service registration
+            builder.Services.AddScoped<PartsTechView>();
 
             // Add HttpContextAccessor
             builder.Services.AddHttpContextAccessor();
