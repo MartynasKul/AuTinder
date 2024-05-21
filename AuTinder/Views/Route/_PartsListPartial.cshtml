@@ -1,0 +1,39 @@
+﻿@model List<PartOffer>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Parts Offers</title>
+    <link rel="stylesheet" type="text/css" href="~/css/styles.css" />
+</head>
+<body>
+    <h2>Optimal Parts Offers</h2>
+    @if (Model.Any())
+    {
+        <table>
+            <thead>
+                <tr>
+                    <th>Part Name</th>
+                    <th>Price</th>
+                    <th>Supplier</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var offer in Model)
+                {
+                    <tr>
+                        <td>@offer.PartName</td>
+                        <td>@offer.Price€</td>
+                        <td>@offer.Supplier</td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <p>No parts available for the selected car.</p>
+    }
+</body>
+</html>
