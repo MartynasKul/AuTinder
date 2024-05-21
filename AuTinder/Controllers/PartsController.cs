@@ -1,4 +1,4 @@
-﻿using AuTinder.Models;
+using AuTinder.Models;
 using AuTinder.Views;
 using Microsoft.AspNetCore.Mvc;
 using System.Transactions;
@@ -38,7 +38,6 @@ namespace AuTinder.Controllers
                     {
                         ComparePricesOfPartsInCategory(categoryParts);
                         PartOffer lowestPricePart = categoryParts[0];
-                        UpdatePriceAndSupplier(lowestPricePart);
                         SaveLowestPricePartToOptimalPartsList(lowestPricePart);
                     }
                 }
@@ -79,13 +78,29 @@ namespace AuTinder.Controllers
         private void ComparePricesOfPartsInCategory(List<PartOffer> categoryParts)
         {
             categoryParts.Sort((x, y) => x.Price.CompareTo(y.Price));
+
+            foreach (var part in categoryParts)
+            {
+                var existingPart = _optimalPartsList.FirstOrDefault(p => p.CategoryID == part.CategoryID);
+                if (existingPart == null)
+                {
+                    _optimalPartsList.Add(part);
+                }
+                else
+                {
+                    if (part.Price < existingPart.Price)
+                    {
+                        UpdatePriceAndSupplier(existingPart, part);
+                    }
+                }
+            }
         }
 
-        private void UpdatePriceAndSupplier(PartOffer part)
+        private void UpdatePriceAndSupplier(PartOffer existingPart, PartOffer newPart)
         {
-            var lowestPricePart = part;
-            part.Price = lowestPricePart.Price;
-            part.Supplier = lowestPricePart.Supplier;
+            existingPart.PartName = newPart.PartName;
+            existingPart.Price = newPart.Price;
+            existingPart.Supplier = newPart.Supplier;
         }
 
         private void SaveLowestPricePartToOptimalPartsList(PartOffer part)
