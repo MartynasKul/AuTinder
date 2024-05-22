@@ -1,0 +1,53 @@
+@{
+    ViewData["Title"] = "OrderList";
+}
+
+<h1>OrderList</h1>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+
+<style>
+    .small-select {
+        width: 150px; /* Adjust width as needed */
+    }
+</style>
+
+<form asp-controller="Order" asp-action="FilterOrders" method="get">
+    <div class="form-group">
+        <label for="orderStatus">Order Status</label>
+        <select id="orderStatus" name="orderStatus" class="form-control small-select">
+            <option value="Paid">Paid</option>
+            <option value="PendingPayment">Pending Payment</option>
+            <option value="Cancelled">Cancelled</option>
+        </select>
+    </div>
+    <button type="submit" class="btn btn-primary">Filter</button>
+    <a asp-action="ShowOrderList" asp-controller="Route">Back to List</a>
+</form>
+
+@foreach (Order order in Model)
+{
+    <div>
+        <h4>Order ID: @order.Id</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Date</dt>
+            <dd class="col-sm-10">@order.Date.ToString("MM/dd/yyyy")</dd>
+
+            <dt class="col-sm-2">Order Status</dt>
+            <dd class="col-sm-10">@order.OrderStatus</dd>
+
+            <dt class="col-sm-2">Order Type</dt>
+            <dd class="col-sm-10">@order.OrderType</dd>
+
+        </dl>
+        <div>
+            @Html.ActionLink("Details", "ShowOrderDetails", new { id = order.Id }) |
+        </div>
+    </div>
+}
