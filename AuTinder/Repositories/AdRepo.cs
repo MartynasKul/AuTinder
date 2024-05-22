@@ -1,4 +1,5 @@
 using AuTinder.Models;
+using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlClient;
@@ -381,4 +382,87 @@ public class AdRepo
 
         return adsWithCars;
     }
+
+    public static List<SeenAd> GetSeenAds(int userId)
+    {
+        string query = @"
+            SELECT sa.fk_ad, sa.fk_user, sa.liked
+            FROM seenad sa
+            WHERE sa.fk_user = ?userId;";
+
+        var rows = Sql.Query(query, args =>
+        {
+            args.Add("?userId", userId);
+
+        });
+        var seenAds = Sql.MapAll<SeenAd>(rows, (extractor, item) =>
+        {
+            item.AdId = extractor.From<int>("fk_ad");
+            item.UserId = extractor.From<int>("fk_user");
+            item.liked = extractor.From<bool>("liked");
+        });
+
+        foreach(var ad in seenAds)
+        {
+            ad.ad = GetAdAndCarById(ad.AdId);
+        }
+
+        return seenAds;
+    }
+
+    public static List<Car> GetUserPreferences(int userId)
+    {
+        string query = @"
+        SELECT id AS CarId, make, model, fk_vechicle_type, year, fk_fuel_type, milage, color, 
+               technical_inspection, fk_drive_types, fk_gear_box, power, fk_wheel_position, 
+               outside_condition, additional_functions, value
+        FROM car
+        WHERE fk_user =  ?userId;";
+
+        var rows = Sql.Query(query, args =>
+        {
+            args.Add("?userId", userId);
+
+        });
+        var cars = Sql.MapAll<Car>(rows, (extractor, item) =>
+        {
+            item.Id = extractor.From<int>("CarId");
+            item.Make = extractor.From<string>("make");
+            item.Model = extractor.From<string>("model");
+            item.BodyType = extractor.From<BodyType>("fk_vechicle_type");
+            item.Year = extractor.From<DateTime>("year");
+            item.FuelType = extractor.From<FuelType>("fk_fuel_type");
+            item.Mileage = extractor.From<int>("milage");
+            item.Color = extractor.From<string>("color");
+            item.Inspection = extractor.From<DateTime>("technical_inspection");
+            item.DriveWheels = extractor.From<DriveWheels>("fk_drive_types");
+            item.Gearbox = extractor.From<Gearbox>("fk_gear_box");
+            item.Power = extractor.From<int>("power");
+            item.SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position");
+            item.OutsideState = extractor.From<string>("outside_condition");
+            item.ExtraFunc = extractor.From<string>("additional_functions");
+            item.Rating = extractor.From<int>("value");
+        });
+
+        return cars;
+    }
+
+    public static void SaveSeenAds(List<SeenAd> seenAds)
+    {
+        foreach (var seenAd in seenAds)
+        {
+            string query = @"
+                INSERT INTO seenad (fk_user, fk_ad, liked)
+                VALUES (?UserId, ?AdId, ?Liked);";
+
+            Sql.Insert(query, args =>
+            {
+                args.Add("?UserId", seenAd.UserId);
+                args.Add("?AdId", seenAd.AdId);
+                args.Add("?Liked", seenAd.liked);
+            });
+        }
+    }
+
+
 }

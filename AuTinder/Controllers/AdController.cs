@@ -2,6 +2,7 @@
 using AuTinder.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace AuTinder.Controllers
@@ -114,5 +115,139 @@ namespace AuTinder.Controllers
         //    string s = route.randomString();
         //    return View();
         //}
+
+        public IActionResult GetRecomendedAds()
+        {
+            List<Ad> ads = AdRepo.GetAllAds();
+            List <SeenAd> seenAds = AdRepo.GetSeenAds(1);
+            List<Car> userPreferences = AdRepo.GetUserPreferences(1);
+            List<Ad> unSeenAds = FilterAds(ads, seenAds);
+            List<Ad> recomendedAds = new List<Ad>();
+            EvalueateAds(userPreferences, unSeenAds, recomendedAds, seenAds);
+            string adsJson = JsonConvert.SerializeObject(recomendedAds);
+
+            // Store the JSON string in TempData
+            TempData["Ads"] = adsJson;
+            return RedirectToAction("OpenMainView", "Route");
+        }
+
+        public List<Ad> FilterAds(List<Ad> ads, List<SeenAd> seenAds)
+        {
+            List<Ad> newlist = new List<Ad>();
+            foreach (Ad ad in ads)
+            {
+                bool seen = false;
+                foreach(SeenAd seenAd in seenAds)
+                {
+                    if (seenAd.AdId == ad.ID)
+                    {
+                        seen = true;
+                        break;
+                    }
+                        
+                }
+                if (!seen)
+                {
+                    newlist.Add(ad);
+                }
+
+            }
+            return newlist;
+        }
+
+        public void EvalueateAds(List<Car> userPreferences, List<Ad> unSeenAds, List<Ad> recomendedAds, List<SeenAd> seenAds)
+        {
+            int n = unSeenAds.Count;
+            while (recomendedAds.Count < 10 && n > 0)
+            {
+                Ad ad = unSeenAds[n - 1];
+                bool evalueation = EvalueateAdByUserPreference(ad, userPreferences);
+                if (evalueation)
+                {
+                    recomendedAds.Add(ad);
+                }
+                else if (seenAds.Count != 0)
+                {
+                    evalueation = EvalueateAdByUserHistory(ad, seenAds);
+                    if (evalueation)
+                    {
+                        recomendedAds.Add(ad);
+                    }
+                }
+                n--;
+            }
+        }
+
+        public bool EvalueateAdByUserPreference(Ad ad, List<Car> userPreferences)
+        {
+            int score = 0;
+            foreach (Car pref in userPreferences)
+            {
+                score = score + ad.Car.CompareCars(pref);
+            }
+            if (score >= 3)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public bool EvalueateAdByUserHistory(Ad ad, List<SeenAd> seenAds)
+        {
+            List<int> repeatsLiked = new List<int>();
+            List<int> repeatsDisliked = new List<int>();
+            List<int> repeatsTotal = new List<int>();
+            double score = 0;
+            for (int i = 0; i < 16; i++)
+            {
+                repeatsLiked.Add(0);
+                repeatsDisliked.Add(0);
+                repeatsTotal.Add(0);
+
+            }
+            foreach (SeenAd seenAd in seenAds)
+            {
+                if (seenAd.liked == true)
+                {
+                    seenAd.ad.Car.CompareRpeatsInCars(ad.Car, repeatsLiked);
+                    if (Math.Abs(seenAd.ad.Price - ad.Price) <= 200)
+                        repeatsLiked[15]++;
+                }
+                else if (seenAd.liked == false)
+                {
+                    seenAd.ad.Car.CompareRpeatsInCars(ad.Car, repeatsDisliked);
+                    if (Math.Abs(seenAd.ad.Price - ad.Price) <= 200)
+                        repeatsDisliked[15]++;
+                }
+                seenAd.ad.Car.CompareRpeatsInCars(ad.Car, repeatsTotal);
+                if (Math.Abs(seenAd.ad.Price - ad.Price) <= 200)
+                    repeatsTotal[15]++;
+                for (int i = 0; i < 16; i++)
+                {
+                    if (repeatsTotal[i] > 0)
+                    {
+                        score = score + (repeatsLiked[i] / repeatsTotal[i]);
+                        score = score - (repeatsDisliked[i] / repeatsTotal[i]);
+                    }
+
+
+                }
+
+            }
+            if (score > 0)
+                return true;
+            return false;
+        }
+
+        [HttpPost]
+        public IActionResult SaveSeenAds([FromBody] List<SeenAd> seenAds)
+        {
+            if (seenAds.Any())
+            {
+                AdRepo.SaveSeenAds(seenAds);
+            }
+
+            return Ok(); // Return a successful response
+        }
     }
 }

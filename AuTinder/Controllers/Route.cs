@@ -1,6 +1,7 @@
 using AuTinder.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
+using Newtonsoft.Json;
 using System.Diagnostics;
 
 namespace AuTinder.Controllers
@@ -236,6 +237,23 @@ namespace AuTinder.Controllers
         public IActionResult OpenProfile()
         {
             return View("ProfileView");
+
+        }
+
+        public IActionResult OpenMainView()
+        {
+            List<Ad> ads = null;
+
+            if (TempData.ContainsKey("Ads"))
+            {
+                // Retrieve the JSON string from TempData
+                string adsJson = TempData["Ads"] as string;
+
+                // Deserialize the JSON string back to a list of ads
+                ads = JsonConvert.DeserializeObject<List<Ad>>(adsJson);
+            }
+
+            return View("MainView", ads);
         }
 
     }
