@@ -30,5 +30,13 @@ namespace AuTinder.Controllers
             Order order = OrderRepo.GetOrder(id);
             return order;
         }
+
+        public ActionResult ShowOrderDetails(int id)
+        {
+            var orderDetails = GetOrder(id);
+
+            // Pass the order details to the view or handle them accordingly
+            return View("~/Views/Route/ShowOrderDetails.cshtml", orderDetails);
+        }
     }
 }
