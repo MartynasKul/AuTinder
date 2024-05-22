@@ -9,10 +9,12 @@ namespace AuTinder.Controllers
     {
         private readonly ILogger<Route> _logger;
         private AdController _adController;
+        private OrderController _orderController;
 
         public Route(ILogger<Route> logger)
         {
             _adController = new AdController();
+            _orderController = new OrderController();
             _logger = logger;
         }
 
@@ -42,13 +44,21 @@ namespace AuTinder.Controllers
             return View("AdCreateView");
         }
 
-        
+
         public IActionResult Ad(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
             return View(ad);
         }
-        
+
+        public ActionResult ShowOrderDetails(int id)
+        {
+            var orderDetails = _orderController.GetOrder(id);
+
+            // Pass the order details to the view or handle them accordingly
+            return View(orderDetails);
+        }
+
         public IActionResult ShowAdList()
         {
             //List<Ad> ads = new List<Ad>
@@ -175,11 +185,18 @@ namespace AuTinder.Controllers
             //    }
             //};
             //List<Ad> ads = AdRepo.GetAllAdsAndCars();
-            
+
             List<Ad> ads = _adController.GetAds();
             Console.WriteLine(1);
             return View("AdLIst", ads);
         }
+        public IActionResult ShowOrderList()
+        {
+            List<Order> orders = _orderController.GetOrderList();
+            Console.WriteLine(1);
+            return View("OrderList", orders);
+        }
+
         public IActionResult ShowEditAd(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
@@ -204,7 +221,7 @@ namespace AuTinder.Controllers
             {
                 _adController.UpdateAddInfo(ad);
             }
-            
+
             return RedirectToAction("ShowAdList", "Route");
         }
 
