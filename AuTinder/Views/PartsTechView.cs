@@ -30,6 +30,10 @@ namespace AuTinder.Views
         new PartOffer { PartName = "Headlight2", Price = 45, Supplier = "Speedway Motors", CategoryID = 7, Make = "test", Model = "test"},
         new PartOffer { PartName = "Tail Light", Price = 35, Supplier = "Speedway Motors", CategoryID = 8, Make = "test", Model = "test"},
         new PartOffer { PartName = "Tail Light2", Price = 45, Supplier = "Speedway Motors", CategoryID = 8, Make = "test", Model = "test"},
+        new PartOffer { PartName = "Headlight", Price = 35, Supplier = "Auto Parts", CategoryID = 1, Make = "pref1", Model = "pref1"},
+        new PartOffer { PartName = "Turbine", Price = 45, Supplier = "Auto Parts", CategoryID = 2, Make = "pref1", Model = "pref1"},
+        new PartOffer { PartName = "Brake disc", Price = 15, Supplier = "Auto Parts", CategoryID = 3, Make = "pref1", Model = "pref1"},
+        new PartOffer { PartName = "Fuel filter", Price = 20, Supplier = "Auto Parts", CategoryID = 4, Make = "pref1", Model = "pref1"},
 
     };
 
