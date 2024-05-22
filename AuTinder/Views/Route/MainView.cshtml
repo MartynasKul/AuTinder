@@ -1,0 +1,227 @@
+﻿@model List<Ad>
+
+@{
+    var userId = 1; // Default user ID
+}
+
+<h1>Recommended Ads</h1>
+<style>
+    #adContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .ad-item {
+        display: block;
+        margin: 10px 0; /* Optional: Adds some space between each ad-item */
+        width: 80%; /* Adjust width as necessary */
+    }
+</style>
+
+<div id="adContainer">
+    @if (Model != null && Model.Any())
+    {
+        foreach (var ad in Model)
+        {
+            <div class="ad-item" data-ad-id="@ad.ID" style="display:none;">
+                <dl class="row">
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Description)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Description)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Price)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Price)
+                    </dd>
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Make)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Make)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Model)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Model)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.BodyType)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.BodyType)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Year)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Year)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.FuelType)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.FuelType)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Mileage)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Mileage)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Color)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Color)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Inspection)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Inspection)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.DriveWheels)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.DriveWheels)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Gearbox)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Gearbox)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Power)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Power)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.SteeringWheelLocation)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.SteeringWheelLocation)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.OutsideState)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.OutsideState)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.ExtraFunc)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.ExtraFunc)
+                    </dd>
+
+                    <dt class="col-sm-2">
+                        @Html.DisplayNameFor(model => ad.Car.Rating)
+                    </dt>
+                    <dd class="col-sm-10">
+                        @Html.DisplayFor(model => ad.Car.Rating)
+                    </dd>
+                </dl>
+                <button class="btn btn-success like-btn">Like</button>
+                <button class="btn btn-danger dislike-btn">Dislike</button>
+            </div>
+        }
+    }
+</div>
+
+@if (Model == null || !Model.Any())
+{
+    <a class="nav-link text-dark" asp-area="" asp-controller="Ad" asp-action="GetRecomendedAds">Show Ads</a>
+}
+
+<script>
+    let currentIndex = 0;
+    let ads = document.querySelectorAll('.ad-item');
+    let seenAds = [];
+
+    function showNextAd() {
+        if (ads.length === 0) return; // No ads to display
+
+        if (currentIndex < ads.length) {
+            ads[currentIndex].style.display = 'block';
+        } else {
+            saveAds();
+        }
+    }
+
+    function handleButtonClick(liked) {
+        let adElement = ads[currentIndex];
+        let adId = adElement.getAttribute('data-ad-id');
+        seenAds.push({
+            UserId: @userId,
+            AdId: adId,
+            liked: liked
+        });
+        adElement.style.display = 'none';
+        currentIndex++;
+        showNextAd();
+    }
+
+    function saveAds() {
+        if (seenAds.length > 0) {
+            fetch('@Url.Action("SaveSeenAds", "Ad")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(seenAds)
+            }).then(response => {
+                if (response.ok) {
+                    if (confirm('Ads saved successfully! Would you like to see more ads?')) {
+                        window.location.href = '@Url.Action("GetRecomendedAds", "Ad")';
+                    } else {
+                        alert('Thank you for your feedback!');
+                    }
+                } else {
+                    alert('Failed to save ads.');
+                }
+            });
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+        if (ads.length > 0) {
+            showNextAd();
+
+            document.querySelectorAll('.like-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    handleButtonClick(true);
+                });
+            });
+
+            document.querySelectorAll('.dislike-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    handleButtonClick(false);
+                });
+            });
+        }
+    });
+</script>
+
