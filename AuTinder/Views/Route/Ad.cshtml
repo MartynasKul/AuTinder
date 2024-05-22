@@ -143,12 +143,45 @@
     <a asp-action="ShowAdList" asp-controller="Route">Back to List</a>
 </div>
 
-<script>
-    function confirmDelete(make, model, id) {
-        if (confirm("Are you sure you want to delete the ad for " + make + " " + model + "?")) {
-            document.getElementById('deleteForm').submit();
-        } else {
-            window.location.href = '@Url.Action("ShowAdList", "Route")';
+<button id="getPartsButton">Get Parts</button>
+
+<div id="partsContainer">
+</div>
+
+@section Scripts {
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        $(document).ready(function () {
+            $('#getPartsButton').click(function () {
+                var make = '@Model.Car.Make';
+                var model = '@Model.Car.Model';
+
+                $.ajax({
+                    url: '@Url.Action("GetParts", "Parts")',
+                    type: 'POST',
+                    data: {
+                        make: make,
+                        model: model
+                    },
+                    success: function (data) {
+                        $('#partsContainer').html(data);
+                    },
+                    error: function () {
+                        alert('Error retrieving parts');
+                    }
+                });
+            });
+        });
+
+    </script>
+
+    <script>
+        function confirmDelete(make, model, id) {
+            if (confirm("Are you sure you want to delete the ad for " + make + " " + model + "?")) {
+                document.getElementById('deleteForm').submit();
+            } else {
+                window.location.href = '@Url.Action("ShowAdList", "Route")';
+            }
         }
-    }
-</script>
+    </script>
+}

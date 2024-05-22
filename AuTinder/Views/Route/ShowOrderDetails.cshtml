@@ -1,0 +1,84 @@
+@model AuTinder.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h1>Order Details</h1>
+
+<div>
+    <h4>Order ID: @Model.Id</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">Date</dt>
+        <dd class="col-sm-10">@Model.Date.ToString("MM/dd/yyyy")</dd>
+
+        <dt class="col-sm-2">Order Status</dt>
+        <dd class="col-sm-10">@Model.OrderStatus</dd>
+
+        <dt class="col-sm-2">Order Type</dt>
+        <dd class="col-sm-10">@Model.OrderType</dd>
+
+        <h4>Ad Details</h4>
+
+        <hr />
+
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Ad.Description</dd>
+
+        <dt class="col-sm-2">Price</dt>
+        <dd class="col-sm-10">@Model.Ad.Price</dd>
+
+        <h4>Car Details</h4>
+
+        <hr />
+
+        <dt class="col-sm-2">Make</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Make</dd>
+
+        <dt class="col-sm-2">Model</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Model</dd>
+
+        <dt class="col-sm-2">BodyType</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.BodyType</dd>
+
+        <dt class="col-sm-2">Year</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Year</dd>
+
+        <dt class="col-sm-2">FuelType</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.FuelType</dd>
+
+        <dt class="col-sm-2">Mileage</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Mileage</dd>
+
+        <dt class="col-sm-2">Color</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Color</dd>
+
+        <dt class="col-sm-2">Inspection</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Inspection</dd>
+
+        <dt class="col-sm-2">DriveWheels</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.DriveWheels</dd>
+
+        <dt class="col-sm-2">GearBox</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Gearbox</dd>
+
+        <dt class="col-sm-2">Power</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Power</dd>
+
+        <dt class="col-sm-2">SteeringWheelLocation</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.SteeringWheelLocation</dd>
+
+        <dt class="col-sm-2">OutsideState</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.OutsideState</dd>
+
+        <dt class="col-sm-2">ExtraFunc</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.ExtraFunc</dd>
+
+        <dt class="col-sm-2">Rating</dt>
+        <dd class="col-sm-10">@Model.Ad.Car.Rating</dd>
+
+       
+    </dl>
+    <a asp-action="ShowOrderList" asp-controller="Route">Back to List</a>
+</div>
