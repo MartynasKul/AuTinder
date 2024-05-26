@@ -27,6 +27,29 @@ namespace AuTinder.Controllers
             return true;
         }
 
+        public bool ConfirmAdStatus(Ad ad)
+        {
+            if (ad.IsOrdered == false)
+            {
+                ad.IsOrdered = true;
+                AdRepo.UpdateAd(ad.ID, ad.Description, ad.Price, ad.IsOrdered);
+                return false;
+            }
+            return true;
+
+        }
+
+        public bool ChangeAdStatus(Ad ad)
+        {
+            if(ad.IsOrdered == true)
+            {
+                ad.IsOrdered = false;
+                AdRepo.UpdateAd(ad.ID, ad.Description, ad.Price, ad.IsOrdered);
+                return true;
+            }
+            return true;
+        }
+
         public void UpdateAddInfo(Ad ad)
         {
             AdRepo.UpdateCarAndAd(
