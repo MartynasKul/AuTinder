@@ -5,6 +5,25 @@ namespace AuTinder.Repositories
 {
     public class OrderRepo
     {
+
+        public static void CreateOrder(Order order)
+        {
+            string query = @"
+                INSERT INTO orders (Date, fk_order_status, fk_order_type, fk_user, fk_ad, fk_payment, fk_delivery)
+                VALUES (?Date, ?fk_order_status, ?fk_order_type, ?fk_user, ?fk_ad, ?fk_payment, ?fk_delivery);";
+
+            Sql.Insert(query, args =>
+            {
+                args.Add("?Date", order.Date);
+                args.Add("?fk_order_status", order.OrderStatus);
+                args.Add("?fk_order_type", order.OrderType);
+                args.Add("?fk_user", 1);
+                args.Add("?fk_ad", order.Ad.ID);
+                args.Add("?fk_payment", 1);
+                args.Add("?fk_delivery", 1);// Assuming fk_user is a foreign key to the user table
+            });
+        }
+
         public static List<Order> GetOrders()
         {
             string query = @"
