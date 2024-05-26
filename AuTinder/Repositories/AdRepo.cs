@@ -140,7 +140,7 @@ public class AdRepo
         return carId; // Return the car ID
     }
 
-    private static void UpdateAd(int id, string description, decimal price, bool isOrdered)
+    public static void UpdateAd(int id, string description, decimal price, bool isOrdered)
     {
         string adQuery = $@"UPDATE ad 
                     SET Description = ?Description, 
