@@ -35,4 +35,7 @@
 <div>
     <a href="@Url.Action("CancelOrder", "Route", new { id = Model.Ad.ID })">Cancel Order</a>
 </div>
+<div>
+    <a href="@Url.Action("CreateOrder", "Route", new { id = Model.Ad.ID, type = Model.OrderType })">Create Order</a>
+</div>
 

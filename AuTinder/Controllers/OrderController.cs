@@ -39,6 +39,18 @@ namespace AuTinder.Controllers
             return View("~/Views/Route/ShowOrderDetails.cshtml", orderDetails);
         }
 
+        public IActionResult CreateOrder(int id, OrderType type)
+        {
+            Order order = new Order();
+            Ad ad = AdRepo.GetAdAndCarById(id);
+            order.Ad = ad;
+            order.OrderStatus = OrderStatus.PendingPayment;
+            order.OrderType = type;
+            order.Date = DateTime.Now;
+            OrderRepo.CreateOrder(order);
+            return RedirectToAction("ShowLikedAdList", "Route");
+        }
+
         public Order StartOrder(Ad ad)
         {
             Order order = new Order();

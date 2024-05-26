@@ -1,5 +1,6 @@
 ﻿
 using AuTinder.Models;
+using AuTinder.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Newtonsoft.Json;
@@ -83,6 +84,8 @@ namespace AuTinder.Controllers
             AdRepo.DeleteAd(id, ad.Car.Id);
             return RedirectToAction("ShowAdList", "Route");
         }
+
+        
 
 
         // POST: Ad/AdCreation
