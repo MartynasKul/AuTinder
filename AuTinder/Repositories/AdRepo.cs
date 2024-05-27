@@ -1,6 +1,7 @@
 using AuTinder.Models;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -411,6 +412,39 @@ public class AdRepo
         }
 
         return seenAds;
+    }
+
+    public static List<Ad> GetLikedAds(int userId)
+    {
+        List<Ad> ads = new List<Ad>();
+        string query = @"
+            SELECT sa.fk_ad, sa.fk_user, sa.liked
+            FROM seenad sa
+            WHERE sa.fk_user = ?userId;";
+
+        var rows = Sql.Query(query, args =>
+        {
+            args.Add("?userId", userId);
+
+        });
+        var seenAds = Sql.MapAll<SeenAd>(rows, (extractor, item) =>
+        {
+            item.AdId = extractor.From<int>("fk_ad");
+            item.UserId = extractor.From<int>("fk_user");
+            item.liked = extractor.From<bool>("liked");
+        });
+
+        foreach (var ad in seenAds)
+        {
+            if(ad.liked == true)
+            {
+                ad.ad = GetAdAndCarById(ad.AdId);
+                ads.Add(ad.ad);
+            }
+
+        }
+
+        return ads;
     }
 
     public static List<Car> GetUserPreferences(int userId)

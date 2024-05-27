@@ -140,7 +140,7 @@ namespace AuTinder.Controllers
 
         public IActionResult ShowLikedAdList()
         {
-            List<Ad> ads = _adController.GetAds();
+            List<Ad> ads = _adController.GetLikedAds();
             Console.WriteLine(1);
             return View("LikedAdLIst", ads);
         }
