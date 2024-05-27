@@ -66,17 +66,14 @@ namespace AuTinder.Controllers
             return order;
         }
 
-        public Order MakeOrderPremium(Ad ad)
+        public Order MakeOrderPremium(Order order)
         {
-            Order order = new Order();
-            order.Ad = ad;
+           
             order.OrderType = OrderType.Premium;
-            order.Date = DateTime.Now;
-            order.OrderStatus = OrderStatus.PendingPayment;
 
             //Calculating distance
             decimal distance = 1200;
-            decimal price = AddDriversPrice(ad.Price, distance, order.OrderType);
+            decimal price = AddDriversPrice(order.Ad.Price, distance, order.OrderType);
             order.Price = price;
             return order;
         }
