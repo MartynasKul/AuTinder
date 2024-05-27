@@ -17,6 +17,12 @@ namespace AuTinder.Controllers
             return ads;
         }
 
+        public List<Ad> GetLikedAds()
+        {
+            List<Ad> ads = AdRepo.GetLikedAds(1);
+            return ads;
+        }
+
         public Ad GetAd(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
