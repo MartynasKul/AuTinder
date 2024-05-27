@@ -1,4 +1,5 @@
 using AuTinder.Models;
+using AuTinder.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Newtonsoft.Json;
@@ -52,6 +53,65 @@ namespace AuTinder.Controllers
             return View(ad);
         }
 
+        public IActionResult LikedAd(int id)
+        {
+            Ad ad = AdRepo.GetAdAndCarById(id);
+            return View(ad);
+        }
+
+        public IActionResult OpenOrderForm(int id)
+        {
+            Ad ad = AdRepo.GetAdAndCarById(id);
+            if(_adController.ConfirmAdStatus(ad) == false)
+            {
+                return ShowOrderForm(ad);
+            }
+            return RedirectToAction("ShowLikedAdList", "Route");
+        }
+
+        public IActionResult ShowOrderForm(Ad ad)
+        {
+           Order order = _orderController.StartOrder(ad);
+            return DisplayOrderForm(order);
+        }
+
+        public IActionResult CancelOrder(int id)
+        {
+            Ad ad = _adController.GetAd(id);
+            if (_adController.ChangeAdStatus(ad))
+            {
+                return RedirectToAction("ShowLikedAdList", "Route");
+            }
+            else
+            {
+                return RedirectToAction("ShowLikedAdList", "Route");
+            }
+        }
+
+        public IActionResult CreateOrder(int id, OrderType type)
+        {
+            Order order = new Order();
+            Ad ad = AdRepo.GetAdAndCarById(id);
+            order.Ad = ad;
+            order.OrderStatus = OrderStatus.PendingPayment;
+            order.OrderType = type;
+            order.Date = DateTime.Now;
+            OrderRepo.CreateOrder(order);
+            return RedirectToAction("ShowLikedAdList", "Route");
+        }
+
+        public IActionResult DisplayOrderForm(Order order)
+        {
+            return View("CreateOrder", order);
+        }
+        public IActionResult MakeOrderPremium(int id)
+        {
+
+            Ad ad = AdRepo.GetAdAndCarById(id);
+            Order order_new = _orderController.MakeOrderPremium(ad);
+            return View("CreateOrder", order_new);
+        }
+
         public ActionResult ShowOrderDetails(int id)
         {
             var orderDetails = _orderController.GetOrder(id);
@@ -62,135 +122,18 @@ namespace AuTinder.Controllers
 
         public IActionResult ShowAdList()
         {
-            //List<Ad> ads = new List<Ad>
-            //{
-            //    new Ad
-            //    {
-            //        Description = "Economical and reliable car",
-            //        Price = 5000m,
-            //        IsOrdered = false,
-            //        Car = new Car
-            //        {
-            //            Make = "Toyota",
-            //            Model = "Corolla",
-            //            BodyType = BodyType.Sedan,
-            //            Year = new DateTime(2018, 1, 1),
-            //            Mileage = 50000,
-            //            FuelType = FuelType.PetrolGas,
-            //            Color = "Blue",
-            //            Inspection = new DateTime(2022, 12, 1),
-            //            DriveWheels = DriveWheels.Front,
-            //            Gearbox = Gearbox.Automatic,
-            //            Power = 132,
-            //            SteeringWheelLocation = SteeringWheelLocation.Left,
-            //            OutsideState = "Good",
-            //            ExtraFunc = "Air Conditioning",
-            //            Rating = 4.5f
-            //        }
-            //    },
-            //    new Ad
-            //    {
-            //        Description = "Luxury sport coupe",
-            //        Price = 27000m,
-            //        IsOrdered = false,
-            //        Car = new Car
-            //        {
-            //            Make = "BMW",
-            //            Model = "4 Series",
-            //            BodyType = BodyType.Coupe,
-            //            Year = new DateTime(2016, 1, 1),
-            //            Mileage = 34000,
-            //            FuelType = FuelType.Petrol,
-            //            Color = "Red",
-            //            Inspection = new DateTime(2023, 1, 10),
-            //            DriveWheels = DriveWheels.Rear,
-            //            Gearbox = Gearbox.Manual,
-            //            Power = 300,
-            //            SteeringWheelLocation = SteeringWheelLocation.Left,
-            //            OutsideState = "Excellent",
-            //            ExtraFunc = "Heated Seats",
-            //            Rating = 4.8f
-            //        }
-            //    },
-            //    new Ad
-            //    {
-            //        Description = "Family SUV with excellent safety features",
-            //        Price = 22000m,
-            //        IsOrdered = true,
-            //        Car = new Car
-            //        {
-            //            Make = "Honda",
-            //            Model = "CR-V",
-            //            BodyType = BodyType.SUVCrossover,
-            //            Year = new DateTime(2020, 1, 1),
-            //            Mileage = 15000,
-            //            FuelType = FuelType.Hydrogen,
-            //            Color = "Silver",
-            //            Inspection = new DateTime(2024, 1, 5),
-            //            DriveWheels = DriveWheels.Rear,
-            //            Gearbox = Gearbox.Automatic,
-            //            Power = 212,
-            //            SteeringWheelLocation = SteeringWheelLocation.Left,
-            //            OutsideState = "Very Good",
-            //            ExtraFunc = "Collision Avoidance System",
-            //            Rating = 4.7f
-            //        }
-            //    },
-            //    new Ad
-            //    {
-            //        Description = "Affordable compact car, great for city driving",
-            //        Price = 8000m,
-            //        IsOrdered = false,
-            //        Car = new Car
-            //        {
-            //            Make = "Ford",
-            //            Model = "Fiesta",
-            //            BodyType = BodyType.Hatchback,
-            //            Year = new DateTime(2017, 1, 1),
-            //            Mileage = 60000,
-            //            FuelType = FuelType.Diesel,
-            //            Color = "Green",
-            //            Inspection = new DateTime(2023, 2, 15),
-            //            DriveWheels = DriveWheels.Front,
-            //            Gearbox = Gearbox.Automatic,
-            //            Power = 85,
-            //            SteeringWheelLocation = SteeringWheelLocation.Left,
-            //            OutsideState = "Good",
-            //            ExtraFunc = "Auto Start/Stop",
-            //            Rating = 4.2f
-            //        }
-            //    },
-            //    new Ad
-            //    {
-            //        Description = "High-performance sports car, ready for the track",
-            //        Price = 55000m,
-            //        IsOrdered = true,
-            //        Car = new Car
-            //        {
-            //            Make = "Porsche",
-            //            Model = "718 Cayman",
-            //            BodyType = BodyType.Coupe,
-            //            Year = new DateTime(2019, 1, 1),
-            //            Mileage = 25000,
-            //            FuelType = FuelType.Petrol,
-            //            Color = "Black",
-            //            Inspection = new DateTime(2023, 3, 30),
-            //            DriveWheels = DriveWheels.Rear,
-            //            Gearbox = Gearbox.Manual,
-            //            Power = 350,
-            //            SteeringWheelLocation = SteeringWheelLocation.Left,
-            //            OutsideState = "Like New",
-            //            ExtraFunc = "Sport Chrono Package",
-            //            Rating = 4.9f
-            //        }
-            //    }
-            //};
-            //List<Ad> ads = AdRepo.GetAllAdsAndCars();
-
             List<Ad> ads = _adController.GetAds();
             Console.WriteLine(1);
             return View("AdLIst", ads);
         }
+
+        public IActionResult ShowLikedAdList()
+        {
+            List<Ad> ads = _adController.GetAds();
+            Console.WriteLine(1);
+            return View("LikedAdLIst", ads);
+        }
+
         public IActionResult ShowOrderList()
         {
             List<Order> orders = _orderController.GetOrderList();

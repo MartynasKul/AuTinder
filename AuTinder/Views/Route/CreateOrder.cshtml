@@ -1,0 +1,41 @@
+﻿@model AuTinder.Models.Order
+
+@{
+    ViewData["Title"] = "Create Order";
+}
+
+<h1>Create Order</h1>
+
+<div>
+    <dl>
+        <dt>Order ID:</dt>
+        <dd>@Model.Id</dd>
+
+        <dt>Date:</dt>
+        <dd>@Model.Date.ToString("yyyy-MM-dd HH:mm:ss")</dd>
+
+        <dt>Order Status:</dt>
+        <dd>@Model.OrderStatus</dd>
+
+        <dt>Order Type:</dt>
+        <dd>@Model.OrderType</dd>
+
+        <dt>Price</dt>
+        <dd>@Model.Price</dd>
+
+        <!-- Add more properties as needed -->
+    </dl>
+</div>
+@if (Model.OrderType != AuTinder.Models.OrderType.Premium)
+{
+    <div>
+        <a href="@Url.Action("MakeOrderPremium", "Route", new { id = Model.Ad.ID })">Make Order Premium</a>
+    </div>
+}
+<div>
+    <a href="@Url.Action("CancelOrder", "Route", new { id = Model.Ad.ID })">Cancel Order</a>
+</div>
+<div>
+    <a href="@Url.Action("CreateOrder", "Route", new { id = Model.Ad.ID, type = Model.OrderType })">Create Order</a>
+</div>
+

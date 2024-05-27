@@ -1,5 +1,6 @@
 ﻿
 using AuTinder.Models;
+using AuTinder.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Newtonsoft.Json;
@@ -24,6 +25,29 @@ namespace AuTinder.Controllers
 
         public bool CheckAdData(Ad ad) 
         {
+            return true;
+        }
+
+        public bool ConfirmAdStatus(Ad ad)
+        {
+            if (ad.IsOrdered == false)
+            {
+                ad.IsOrdered = true;
+                AdRepo.UpdateAd(ad.ID, ad.Description, ad.Price, ad.IsOrdered);
+                return false;
+            }
+            return true;
+
+        }
+
+        public bool ChangeAdStatus(Ad ad)
+        {
+            if(ad.IsOrdered == true)
+            {
+                ad.IsOrdered = false;
+                AdRepo.UpdateAd(ad.ID, ad.Description, ad.Price, ad.IsOrdered);
+                return true;
+            }
             return true;
         }
 
@@ -60,6 +84,8 @@ namespace AuTinder.Controllers
             AdRepo.DeleteAd(id, ad.Car.Id);
             return RedirectToAction("ShowAdList", "Route");
         }
+
+        
 
 
         // POST: Ad/AdCreation
