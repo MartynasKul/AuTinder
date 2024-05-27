@@ -2,6 +2,7 @@
 {
     public class User
     {
+        public int Id { get; set; }
         public bool driver { get; set; }
         public string email { get; set; }
         public string name { get; set; }

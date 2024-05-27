@@ -60,8 +60,8 @@ public class AdRepo
 
     private static void InsertAd(string description, decimal price, bool isOrdered, long carId)
     {
-        string adQuery = $@"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user)
-                           VALUES (?Description, ?Price, ?Ordered, ?Fk_Car, ?fk_user);";
+        string adQuery = $@"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user, Address)
+                           VALUES (?Description, ?Price, ?Ordered, ?Fk_Car, ?fk_user, ?Address);";
 
         // Execute the query to insert into Ad table
         Sql.Insert(adQuery, args =>
@@ -71,6 +71,7 @@ public class AdRepo
             args.Add("?Ordered", isOrdered);
             args.Add("?Fk_Car", carId);
             args.Add("?fk_user", 1); // Assuming fk_user is a foreign key to the user table
+            args.Add("?Address", "To be implemented");
         });
     }
 
@@ -300,7 +301,7 @@ public class AdRepo
     public static List<Ad> GetAllAds()
     {
         string query = @"
-        SELECT a.Id, a.Description, a.Price, a.Ordered, 
+        SELECT a.Id, a.Description, a.Price, a.Ordered, a.Address, 
                c.id AS CarId, c.make, c.model, c.fk_vechicle_type, c.year, c.fk_fuel_type, c.milage, c.color, 
                c.technical_inspection, c.fk_drive_types, c.fk_gear_box, c.power, c.fk_wheel_position, 
                c.outside_condition, c.additional_functions, c.value
@@ -333,6 +334,7 @@ public class AdRepo
                 ExtraFunc = extractor.From<string>("additional_functions"),
                 Rating = extractor.From<int>("value")
             };
+            item.Address = extractor.From<string>("Address");
         });
 
         return adsWithCars;
@@ -341,7 +343,7 @@ public class AdRepo
     public static Ad GetAdAndCarById(int id)
     {
         string query = @"
-        SELECT a.Id, a.Description, a.Price, a.Ordered, 
+        SELECT a.Id, a.Description, a.Price, a.Ordered, a.Address, 
                c.id AS CarId, c.make, c.model, c.fk_vechicle_type, c.year, c.fk_fuel_type, c.milage, c.color, 
                c.technical_inspection, c.fk_drive_types, c.fk_gear_box, c.power, c.fk_wheel_position, 
                c.outside_condition, c.additional_functions, c.value
@@ -378,6 +380,7 @@ public class AdRepo
                 ExtraFunc = extractor.From<string>("additional_functions"),
                 Rating = extractor.From<int>("value")
             };
+            item.Address = extractor.From<string>("Address");
         });
 
         return adsWithCars;

@@ -3,15 +3,17 @@
 
     public enum DeliveryStatus
     {
-        Delivered,
-        InProgress,
-        Accepted,
+        Cancelled,
         WaitingForDriver,
-        Cancelled
+        Accepted,
+        InProgress,
+        Delivered
+       
     }
     public class Delivery
     {
-        public int Durateion { get; set; }
+        public int Id { get; set; }
+        public int Duration { get; set; }
         public DeliveryStatus DeliveryStatus { get; set; }
         public int Length { get; set; }
         public string Address_to { get; set; }
