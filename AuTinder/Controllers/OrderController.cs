@@ -46,9 +46,22 @@ namespace AuTinder.Controllers
             order.OrderType = OrderType.Simple;
             order.Date = DateTime.Now;
             order.OrderStatus = OrderStatus.PendingPayment;
+            Delivery delivery = new Delivery();
+            delivery.DeliveryStatus = DeliveryStatus.WaitingForDriver;
+            delivery.Address_from = ad.Address;
+            delivery.Address_to = "User adress here hehe";
+            Payment payment = new Payment();
+            payment.Paid = false;
+            payment.Date = DateTime.Now;
 
             //Calculating distance
+            delivery.Duration = 10;
+            delivery.Length = 10;
+            order.Delivery = delivery;
+            order.Payment = payment;
             decimal distance = 1200;
+
+
             decimal price = AddDriversPrice(ad.Price, distance, order.OrderType);
             order.Price = price;
             return order;

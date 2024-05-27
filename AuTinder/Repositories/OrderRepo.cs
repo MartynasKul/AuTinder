@@ -5,9 +5,52 @@ namespace AuTinder.Repositories
 {
     public class OrderRepo
     {
+        public static void CreatePayment(Payment payment)
+        {
+            string query = @"
+                INSERT INTO payment (Date, Paid)
+                VALUES (?Date, ?Paid);";
+
+            Sql.Insert(query, args =>
+            {
+                args.Add("?Date", payment.Date);
+                args.Add("?Paid", payment.Paid);
+            });
+        }
+
+        public static int GetLastInsertedPaymentId()
+        {
+            string query = @"
+        SELECT Id
+        FROM payment
+        ORDER BY Id DESC
+        LIMIT 1;";
+
+            // Execute the query to retrieve the last inserted ID
+            var result = Sql.Query(query);
+
+            // Check if any result is returned
+            if (result.Count == 0)
+            {
+                throw new Exception("No payment records found.");
+            }
+
+            // Extract the last inserted ID from the result
+            int lastInsertedId = Convert.ToInt32(result[0]["Id"]);
+
+            return lastInsertedId;
+        }
+
 
         public static void CreateOrder(Order order)
         {
+
+            DeliveryRepo.CreateDelivery(order.Delivery);
+            int fk_delivery = DeliveryRepo.GetLastInsertedDeliveryId();
+
+            CreatePayment(order.Payment);
+            int fk_payment = GetLastInsertedPaymentId();
+
             string query = @"
                 INSERT INTO orders (Date, fk_order_status, fk_order_type, fk_user, fk_ad, fk_payment, fk_delivery, Price)
                 VALUES (?Date, ?fk_order_status, ?fk_order_type, ?fk_user, ?fk_ad, ?fk_payment, ?fk_delivery, ?Price);";
@@ -19,8 +62,8 @@ namespace AuTinder.Repositories
                 args.Add("?fk_order_type", order.OrderType);
                 args.Add("?fk_user", 1);
                 args.Add("?fk_ad", order.Ad.ID);
-                args.Add("?fk_payment", 1);
-                args.Add("?fk_delivery", 1);
+                args.Add("?fk_payment", fk_payment);
+                args.Add("?fk_delivery", fk_delivery);
                 args.Add("?Price", order.Price);// Assuming fk_user is a foreign key to the user table
             });
         }
