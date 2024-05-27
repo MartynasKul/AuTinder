@@ -9,8 +9,8 @@ namespace AuTinder.Repositories
         public static void CreateOrder(Order order)
         {
             string query = @"
-                INSERT INTO orders (Date, fk_order_status, fk_order_type, fk_user, fk_ad, fk_payment, fk_delivery)
-                VALUES (?Date, ?fk_order_status, ?fk_order_type, ?fk_user, ?fk_ad, ?fk_payment, ?fk_delivery);";
+                INSERT INTO orders (Date, fk_order_status, fk_order_type, fk_user, fk_ad, fk_payment, fk_delivery, Price)
+                VALUES (?Date, ?fk_order_status, ?fk_order_type, ?fk_user, ?fk_ad, ?fk_payment, ?fk_delivery, ?Price);";
 
             Sql.Insert(query, args =>
             {
@@ -20,7 +20,8 @@ namespace AuTinder.Repositories
                 args.Add("?fk_user", 1);
                 args.Add("?fk_ad", order.Ad.ID);
                 args.Add("?fk_payment", 1);
-                args.Add("?fk_delivery", 1);// Assuming fk_user is a foreign key to the user table
+                args.Add("?fk_delivery", 1);
+                args.Add("?Price", order.Price);// Assuming fk_user is a foreign key to the user table
             });
         }
 

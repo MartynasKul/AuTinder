@@ -71,32 +71,37 @@ namespace AuTinder.Controllers
 
         public IActionResult ShowOrderForm(Ad ad)
         {
-           Order order = _orderController.StartOrder(ad);
+            Order order = _orderController.StartOrder(ad);
+            TempData["Order"] = JsonConvert.SerializeObject(order);
             return DisplayOrderForm(order);
         }
 
-        public IActionResult CancelOrder(int id)
+        public IActionResult CancelOrder()
         {
-            Ad ad = _adController.GetAd(id);
-            if (_adController.ChangeAdStatus(ad))
+
+            if (TempData["Order"] != null)
             {
-                return RedirectToAction("ShowLikedAdList", "Route");
+                var orderJson = TempData["Order"].ToString();
+                var order = JsonConvert.DeserializeObject<Order>(orderJson);
+                TempData.Remove("Order");
+                if (_adController.ChangeAdStatus(order.Ad))
+                {
+                    return RedirectToAction("ShowLikedAdList", "Route");
+                }
             }
-            else
-            {
-                return RedirectToAction("ShowLikedAdList", "Route");
-            }
+           
+            return RedirectToAction("ShowLikedAdList", "Route");
+
         }
 
-        public IActionResult CreateOrder(int id, OrderType type)
+        public IActionResult CreateOrder()
         {
-            Order order = new Order();
-            Ad ad = AdRepo.GetAdAndCarById(id);
-            order.Ad = ad;
-            order.OrderStatus = OrderStatus.PendingPayment;
-            order.OrderType = type;
-            order.Date = DateTime.Now;
-            OrderRepo.CreateOrder(order);
+            if (TempData["Order"] != null)
+            {
+                var orderJson = TempData["Order"].ToString();
+                var order = JsonConvert.DeserializeObject<Order>(orderJson);
+                OrderRepo.CreateOrder(order);
+            }
             return RedirectToAction("ShowLikedAdList", "Route");
         }
 
@@ -104,11 +109,17 @@ namespace AuTinder.Controllers
         {
             return View("CreateOrder", order);
         }
-        public IActionResult MakeOrderPremium(int id)
-        {
 
-            Ad ad = AdRepo.GetAdAndCarById(id);
-            Order order_new = _orderController.MakeOrderPremium(ad);
+        public IActionResult MakeOrderPremium()
+        {
+            Order order_new = new Order();
+            if (TempData["Order"] != null)
+            {
+                var orderJson = TempData["Order"].ToString();
+                var order = JsonConvert.DeserializeObject<Order>(orderJson);
+                order_new = _orderController.MakeOrderPremium((Order)order);
+                TempData["Order"] = JsonConvert.SerializeObject(order_new);
+            }
             return View("CreateOrder", order_new);
         }
 

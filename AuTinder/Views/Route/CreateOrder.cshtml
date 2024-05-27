@@ -29,13 +29,13 @@
 @if (Model.OrderType != AuTinder.Models.OrderType.Premium)
 {
     <div>
-        <a href="@Url.Action("MakeOrderPremium", "Route", new { id = Model.Ad.ID })">Make Order Premium</a>
+        <a href="@Url.Action("MakeOrderPremium", "Route")">Make Order Premium</a>
     </div>
 }
 <div>
-    <a href="@Url.Action("CancelOrder", "Route", new { id = Model.Ad.ID })">Cancel Order</a>
+    <a href="@Url.Action("CancelOrder", "Route")">Cancel Order</a>
 </div>
 <div>
-    <a href="@Url.Action("CreateOrder", "Route", new { id = Model.Ad.ID, type = Model.OrderType })">Create Order</a>
+    <a href="@Url.Action("CreateOrder", "Route")">Create Order</a>
 </div>
 
