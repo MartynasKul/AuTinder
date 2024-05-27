@@ -1,3 +1,5 @@
+using System.Security.Policy;
+
 namespace AuTinder.Models
 {
     public enum OrderStatus
@@ -16,12 +18,12 @@ namespace AuTinder.Models
     {
         public decimal Price { get; set; }
         public int Id { get; set; }
-
         public DateTime Date { get; set; }
-
         public OrderStatus OrderStatus { get; set; }
         public OrderType OrderType { get; set; }
-
+        public Delivery Delivery { get; set; }
+        public Payment Payment { get; set; }
+        public User User { get; set; }
         public Ad Ad { get; set; }
     }
 }
