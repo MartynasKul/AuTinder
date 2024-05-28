@@ -10,8 +10,8 @@ namespace AuTinder.Models
     }
     public enum OrderType
     {
-        Simple,
-        Premium
+        Simple = 1,
+        Premium = 2
     }
 
     public class Order
@@ -25,5 +25,7 @@ namespace AuTinder.Models
         public Payment Payment { get; set; }
         public User User { get; set; }
         public Ad Ad { get; set; }
+
+        public string PayPalOrderId { get; set; }
     }
 }
