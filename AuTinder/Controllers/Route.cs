@@ -3,6 +3,7 @@ using AuTinder.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Newtonsoft.Json;
+using System.Configuration;
 using System.Diagnostics;
 
 namespace AuTinder.Controllers
@@ -12,11 +13,11 @@ namespace AuTinder.Controllers
         private readonly ILogger<Route> _logger;
         private AdController _adController;
         private OrderController _orderController;
-
+        private readonly IConfiguration _configuration;
         public Route(ILogger<Route> logger)
         {
             _adController = new AdController();
-            _orderController = new OrderController();
+            _orderController = new OrderController(_configuration);
             _logger = logger;
         }
 
