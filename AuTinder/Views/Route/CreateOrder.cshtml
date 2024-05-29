@@ -8,8 +8,6 @@
 
 <div>
     <dl>
-        <dt>Order ID:</dt>
-        <dd>@Model.Id</dd>
 
         <dt>Date:</dt>
         <dd>@Model.Date.ToString("yyyy-MM-dd HH:mm:ss")</dd>
@@ -22,6 +20,15 @@
 
         <dt>Price</dt>
         <dd>@Model.Price</dd>
+
+        <dt>Length</dt>
+        <dd>@Model.Delivery.Length</dd>
+
+        <dt>Delivery Duration</dt>
+        <dd>@Model.Delivery.Duration</dd>
+
+        <dt>AverageTime</dt>
+        <dd>@Model.AverageTime</dd>
 
         <!-- Add more properties as needed -->
     </dl>

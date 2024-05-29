@@ -25,7 +25,7 @@ namespace AuTinder.Models
         public Payment Payment { get; set; }
         public User User { get; set; }
         public Ad Ad { get; set; }
-
+        public int AverageTime { get; set; }
         public string PayPalOrderId { get; set; }
     }
 }

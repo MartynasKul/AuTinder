@@ -14,11 +14,13 @@ namespace AuTinder.Controllers
 
         private readonly IConfiguration _configuration;
         private readonly MapController _mapController;
+        private readonly TimeController _timeController;
 
         public OrderController(IConfiguration configuration)
         {
             _configuration = configuration;
             _mapController = new MapController();
+            _timeController = new TimeController();
         }
 
         public IActionResult Index()
@@ -71,18 +73,17 @@ namespace AuTinder.Controllers
 
             User user = UserRepo.GetUserById(1);
 
-            Console.WriteLine(user.Address);
-            Console.WriteLine(ad.Address);
-            //Calculating distance
-            double distance = _mapController.GetDistance(ad.Address, user.Address).Result;
+            
+            (double distance, int duration )= _mapController.GetDistanceAndDuration(ad.Address, user.Address).Result;
             int dis = Convert.ToInt32(distance);
-            delivery.Duration = 10;
+            delivery.Duration = duration;
             delivery.Length = dis;
             delivery.Address_from = ad.Address;
             delivery.Address_to = user.Address;
             order.Delivery = delivery;
             order.Payment = payment;
-            Console.WriteLine(distance);
+            order.AverageTime = _timeController.GetAverageTime(order).Result;
+            Console.WriteLine(order.AverageTime);
 
             decimal price = AddDriversPrice(ad.Price, delivery.Length, order.OrderType);
             order.Price = price;
@@ -95,6 +96,8 @@ namespace AuTinder.Controllers
             order.OrderType = OrderType.Premium;
             decimal price = AddDriversPrice(order.Ad.Price, order.Delivery.Length, order.OrderType);
             order.Price = price;
+            order.AverageTime = _timeController.GetAverageTime(order).Result;
+            Console.WriteLine(order.AverageTime);
             return order;
         }
 

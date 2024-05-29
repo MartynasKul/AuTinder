@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json.Linq;
 using AuTinder.Models;
 using AuTinder.Repositories;
+using System.ComponentModel;
 
 namespace AuTinder.Controllers
 {
@@ -20,21 +21,74 @@ namespace AuTinder.Controllers
         }
 
 
-        public async Task<Dictionary<int, (double distance, double duration)>> GetDistancesAndDurationsForDrivers(Order order)
+        public async Task<int> GetAverageTime(Order order)
         {
             List<User> drivers = UserRepo.GetAllDrivers();
-            Dictionary<int, (double distance, double duration)> distancesAndDurations = new Dictionary<int, (double distance, double duration)>();
-
+            Dictionary<int, (double distance, int duration)> distancesAndDurations = new Dictionary<int, (double distance, int duration)>();
+            List<User> PremiumDrivers = CreateEmptyPremiumList();
+            int AverageTime = 0;
+            Console.WriteLine(drivers.Count());
             foreach (User driver in drivers)
             {
+                Console.WriteLine(driver.Name);
                 (double distance, int duration) = await _mapController.GetDistanceAndDuration(driver.Address, order.Ad.Address);
-                duration = order.Delivery.Duration;
+                Console.WriteLine("Trip duration = " + duration);
+                duration += order.Delivery.Duration;
+                Console.WriteLine("Delivery duration += " + duration);
                 distance = order.Delivery.Length;
-                distancesAndDurations.Add(driver.Id, (distance, duration));
                 duration = AddTimeEvery10h(duration);
+                Console.WriteLine("Time Every 10h += " + duration);
+                duration = AddTimeBeforeTrip(driver,duration);
+                Console.WriteLine("Time before trip += " + duration);
+                if (order.OrderType == OrderType.Premium)
+                {
+                    if(duration < order.AverageTime)
+                    {
+                        PremiumDrivers.Add(driver);
+                    }
+                }
+
+                distancesAndDurations.Add(driver.Id, (distance, duration));
+            }
+            if (order.OrderType == OrderType.Premium)
+            {
+               AverageTime = CalculateAverageTimeFromDriverList(PremiumDrivers, distancesAndDurations);
+            }
+            else
+            {
+               AverageTime = CalculateAverageTimeFromDriverList(drivers, distancesAndDurations);
+            }
+                
+
+            return AverageTime;
+        }
+
+        public int CalculateAverageTimeFromDriverList(List<User> drivers, Dictionary<int, (double distance, int duration)> distancesAndDurations)
+        {
+            int averagetime = 0;
+            int count = drivers.Count();
+            foreach (User driver in drivers)
+            {
+                averagetime += distancesAndDurations[driver.Id].duration;
+            }
+            averagetime = averagetime / count;
+
+            return averagetime;
+        }
+
+        public int AddTimeBeforeTrip(User driver, int duration)
+        {
+            DateTime startDateTime = DateTime.Now;
+            DateTime endDateTime = driver.Date;
+
+            if (startDateTime > endDateTime)
+            {
+                return duration;
             }
 
-            return distancesAndDurations;
+            TimeSpan timeDifference = endDateTime - startDateTime;
+            double hoursDifference = timeDifference.TotalHours;
+            return duration + (int)hoursDifference;
         }
 
         public int AddTimeEvery10h(int duration)
@@ -44,7 +98,7 @@ namespace AuTinder.Controllers
             {
                 duration += 10;
             }
-            return rest_times;
+            return duration;
         }
 
         public List<User> CreateEmptyPremiumList()
