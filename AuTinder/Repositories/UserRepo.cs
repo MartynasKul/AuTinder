@@ -149,4 +149,13 @@ public class UserRepo
 
         return drivers;
     }
+
+    public static bool IsDriver(int userId)
+    {
+        string query = "SELECT driver FROM user WHERE id = " + userId;
+
+        var rows = Sql.Query(query);
+
+        return (bool)rows[0]["driver"];
+    }
 }

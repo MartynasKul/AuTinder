@@ -11,36 +11,36 @@
     <hr />
     <dl class="row">
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.DeliveryID)
+            @Html.DisplayNameFor(model => model.DeliveryId)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.DeliveryID)
+            @Html.DisplayFor(model => model.DeliveryId)
         </dd>
         <dt class="col-sm-2">
-            @Html.DisplayNameFor(model => model.UserID)
+            @Html.DisplayNameFor(model => model.UserId)
         </dt>
         <dd class="col-sm-10">
-            @Html.DisplayFor(model => model.UserID)
+            @Html.DisplayFor(model => model.UserId)
         </dd>
-        @if (Model.delivery != null)
+        @if (Model.Delivery != null)
         {
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.delivery.Address_from)
+                @Html.DisplayNameFor(model => model.Delivery.AddressFrom)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.delivery.Address_from)
+                @Html.DisplayFor(model => model.Delivery.AddressFrom)
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.delivery.Address_to)
+                @Html.DisplayNameFor(model => model.Delivery.AddressTo)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.delivery.Address_to)
+                @Html.DisplayFor(model => model.Delivery.AddressTo)
             </dd>
             <dt class="col-sm-2">
-                @Html.DisplayNameFor(model => model.delivery.Length)
+                @Html.DisplayNameFor(model => model.Delivery.Length)
             </dt>
             <dd class="col-sm-10">
-                @Html.DisplayFor(model => model.delivery.Length)
+                @Html.DisplayFor(model => model.Delivery.Length)
             </dd>
             <!-- Add more delivery details as needed -->
         }
@@ -72,8 +72,8 @@
             });
             directionsRenderer.setMap(map);
 
-            var start = '@Model.delivery.Address_from';
-            var end = '@Model.delivery.Address_to';
+            var start = '@Model.Delivery.AddressFrom';
+            var end = '@Model.Delivery.AddressTo';
             var request = {
                 origin: start,
                 destination: end,
