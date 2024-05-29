@@ -81,6 +81,58 @@ namespace AuTinder.Repositories
             return lastInsertedId;
         }
 
+        public static int GetLastInsertedOrderId()
+        {
+            string query = @"
+        SELECT ID
+        FROM orders
+        ORDER BY ID DESC
+        LIMIT 1;";
+
+            // Execute the query to retrieve the last inserted ID
+            var result = Sql.Query(query);
+
+            // Check if any result is returned
+            if (result.Count == 0)
+            {
+                throw new Exception("No order records found.");
+            }
+
+            // Extract the last inserted ID from the result
+            int lastInsertedId = Convert.ToInt32(result[0]["ID"]);
+
+            return lastInsertedId;
+        }
+
+        public static void UpdateOrder(int id, Order updatedOrder)
+        {
+            // Assuming orderId is the primary key of the order table
+            string query = @"
+            UPDATE orders
+            SET Date = ?Date,
+                fk_order_status = ?OrderStatus,
+                fk_order_type = ?OrderType,
+                fk_user = ?UserId,  -- Assuming you have a field for user ID in the order table
+                fk_ad = ?AdId,      -- Assuming you have a field for ad ID in the order table
+                fk_payment = ?PaymentId,
+                fk_delivery = ?DeliveryId,
+                Price = ?Price
+            WHERE ID = ?id";
+
+            Sql.Update(query, args =>
+            {
+                args.Add("?id", id);
+                args.Add("?Date", updatedOrder.Date);
+                args.Add("?OrderStatus", updatedOrder.OrderStatus);
+                args.Add("?OrderType", updatedOrder.OrderType);
+                args.Add("?UserId", 1);     // Replace UserId with the appropriate property
+                args.Add("?AdId", updatedOrder.Ad.ID);         // Replace AdId with the appropriate property
+                args.Add("?PaymentId", updatedOrder.Payment.Id);  // Assuming Payment has an Id property
+                args.Add("?DeliveryId", updatedOrder.Delivery.Id); // Assuming Delivery has an Id property
+                args.Add("?Price", updatedOrder.Price);
+            });
+        }
+
 
         public static Order CreateOrder(Order order)
         {

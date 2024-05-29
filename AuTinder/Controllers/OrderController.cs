@@ -117,6 +117,7 @@ namespace AuTinder.Controllers
                 var orderJson = TempData["Order"].ToString();
                 order = JsonConvert.DeserializeObject<AuTinder.Models.Order>(orderJson);
                 order = OrderRepo.CreateOrder(order);
+                order.Id = OrderRepo.GetLastInsertedOrderId();
                 TempData["Order"] = JsonConvert.SerializeObject(order);
             }
             string currency = "EUR";
@@ -185,8 +186,19 @@ namespace AuTinder.Controllers
             }
             else
             {
+                if (TempData["Order"] != null)
+                {
+                    var orderJson = TempData["Order"].ToString();
+                    order = JsonConvert.DeserializeObject<AuTinder.Models.Order>(orderJson);
+                    order.OrderStatus = OrderStatus.Cancelled;
+                    OrderRepo.UpdateOrder(order.Id, order);
+                }
+                order.Ad.IsOrdered = false;
+                AdRepo.UpdateAd(order.Ad.ID, order.Ad.Description, order.Ad.Price, order.Ad.IsOrdered);
+
                 TempData["OrderResponse"] = JsonConvert.SerializeObject("Payment failed, order canceled");
-                return RedirectToAction("ShowLikedAdList", "Route");
+                TempData.Remove("Order");
+                return RedirectToAction("ShowLikedAdList", "Route"); ;
             }
         }
 
@@ -201,8 +213,12 @@ namespace AuTinder.Controllers
             TempData["OrderResponse"] = JsonConvert.SerializeObject("Order was complete, you can find your new order in your oder list :D");
             order.OrderStatus = OrderStatus.Paid;
             order.Payment.Paid = true;
-            Console.WriteLine("we got here");
             OrderRepo.UpdatePayment(order.Payment.Id, order.Payment);
+            order.OrderStatus = OrderStatus.Paid;
+            OrderRepo.UpdateOrder(order.Id, order);
+            order.Ad.IsOrdered = true;
+            AdRepo.UpdateAd(order.Ad.ID, order.Ad.Description, order.Ad.Price, order.Ad.IsOrdered);
+            TempData.Remove("Order");
             return RedirectToAction("ShowLikedAdList", "Route");
         }
         
@@ -255,7 +271,19 @@ namespace AuTinder.Controllers
 
         public IActionResult CancelPayment()
         {
+            AuTinder.Models.Order order = new AuTinder.Models.Order();
+            if (TempData["Order"] != null)
+            {
+                var orderJson = TempData["Order"].ToString();
+                order = JsonConvert.DeserializeObject<AuTinder.Models.Order>(orderJson);
+                order.OrderStatus = OrderStatus.Cancelled;
+                OrderRepo.UpdateOrder(order.Id, order);
+            }
+            order.Ad.IsOrdered = false;
+            AdRepo.UpdateAd(order.Ad.ID, order.Ad.Description, order.Ad.Price, order.Ad.IsOrdered);
+
             TempData["OrderResponse"] = JsonConvert.SerializeObject("Payment failed, order canceled");
+            TempData.Remove("Order");
             return RedirectToAction("ShowLikedAdList", "Route");
         }
 
