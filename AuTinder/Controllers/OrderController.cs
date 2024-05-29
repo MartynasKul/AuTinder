@@ -64,7 +64,7 @@ namespace AuTinder.Controllers
             order.Date = DateTime.Now;
             order.OrderStatus = OrderStatus.PendingPayment;
             Delivery delivery = new Delivery();
-            delivery.Status = DeliveryStatus.WaitingForDriver;
+            delivery.Status = Delivery.DeliveryStatus.WaitingForDriver;
             delivery.AddressFrom = ad.Address;
             delivery.AddressTo = "User adress here hehe";
             AuTinder.Models.Payment payment = new AuTinder.Models.Payment();
