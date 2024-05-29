@@ -486,7 +486,7 @@ namespace AuTinder.Repositories
 
             var seenDeliveriesRows = Sql.MapAll<SeenDelivery>(rows, (extractor, item) =>
             {
-                item.DeliveryI = extractor.From<int>("fk_delivery");
+                item.DeliveryId = extractor.From<int>("fk_delivery");
                 item.UserId = extractor.From<int>("fk_user");
                 item.liked = extractor.From<bool>("liked");
             });

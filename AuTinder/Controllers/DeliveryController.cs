@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Org.BouncyCastle.Bcpg.OpenPgp;
 using AuTinder.Models;
-using AuTinder.Repositories
+using AuTinder.Repositories;
 using K4os.Compression.LZ4.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
