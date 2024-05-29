@@ -112,7 +112,6 @@ namespace AuTinder.Controllers
             Order order_new = new Order();
             if (TempData["Order"] != null)
             {
-                
                 var orderJson = TempData["Order"].ToString();
                 var order = JsonConvert.DeserializeObject<Order>(orderJson);
                 order_new = _orderController.MakeOrderPremium((Order)order);
@@ -200,6 +199,10 @@ namespace AuTinder.Controllers
             List<Ad> ads = null;
             List<Delivery> deliveries = null;
 
+            if (TempData.ContainsKey("NoAds"))
+            {
+                ViewBag.NoAds = TempData["NoAds"];
+            }
             if (TempData.ContainsKey("Ads"))
             {
                 // Retrieve the JSON string from TempData

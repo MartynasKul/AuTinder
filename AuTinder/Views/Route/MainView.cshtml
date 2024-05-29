@@ -106,6 +106,12 @@ else
                             @Html.DisplayFor(model => ad.Price)
                         </dd>
                         <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Address)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Address)
+                        </dd>
+                        <dt class="col-sm-2">
                             @Html.DisplayNameFor(model => ad.Car.Make)
                         </dt>
                         <dd class="col-sm-10">
@@ -226,6 +232,10 @@ else
     }
     else
     {
+        if (ViewBag.NoAds != null)
+        {
+            <p>@ViewBag.NoAds</p>
+        }
         <a class="nav-link text-dark" asp-area="" asp-controller="Ad" asp-action="GetRecomendedAds">Show Ads</a>
     }
 }
