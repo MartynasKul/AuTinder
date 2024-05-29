@@ -13,10 +13,11 @@ namespace AuTinder.Models
         public string Phone { get; set; }
         public string Address { get; set; }
         public int SearchDistance { get; set; }
+        public DateTime Date { get; set; }
         public int AdCount { get; set; }
         public int OrderCount { get; set; }
 
-        public User(int id, bool driver, string email, string name, string surname, string phone, string address, int searchDistance, int adCount, int orderCount)
+        public User(int id, bool driver, string email, string name, string surname, string phone, string address, int searchDistance, int adCount, int orderCount, DateTime Date)
         {
             Id = id;
             Driver = driver;
@@ -28,6 +29,7 @@ namespace AuTinder.Models
             SearchDistance = searchDistance;
             AdCount = adCount;
             OrderCount = orderCount;
+            this.Date = Date;
         }
         public User() { }
     }

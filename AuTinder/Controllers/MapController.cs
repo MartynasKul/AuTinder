@@ -15,6 +15,7 @@ namespace AuTinder.Controllers
             _httpClient = new HttpClient();
         }
 
+
         public async Task<double> GetDistance(string address_from, string address_to)
         {
             // Replace 'YOUR_API_KEY' with your actual API key
@@ -44,6 +45,42 @@ namespace AuTinder.Controllers
             {
                 // Handle error
                 throw new Exception("Failed to retrieve distance from Google Maps API.");
+            }
+        }
+
+        public async Task<(double distance, int durationHours)> GetDistanceAndDuration(string address_from, string address_to)
+        {
+            // Replace 'YOUR_API_KEY' with your actual API key
+            string apiKey = "YOUR_API_KEY";
+
+            string origin = address_from;
+            string destination = address_to;
+
+            string url = $"https://maps.googleapis.com/maps/api/directions/json?origin={origin}&destination={destination}&key={apiKey}";
+
+            HttpResponseMessage response = await _httpClient.GetAsync(url);
+
+            if (response.IsSuccessStatusCode)
+            {
+                string json = await response.Content.ReadAsStringAsync();
+                JObject data = JObject.Parse(json);
+
+                // Extract distance and duration information
+                int distanceInMeters = (int)data["routes"][0]["legs"][0]["distance"]["value"];
+                int durationInSeconds = (int)data["routes"][0]["legs"][0]["duration"]["value"];
+
+                // Convert distance to kilometers
+                double distanceInKilometers = distanceInMeters / 1000.0;
+
+                // Convert duration to hours and round to the nearest integer
+                int durationHours = (int)Math.Round(durationInSeconds / 3600.0);
+
+                return (distanceInKilometers, durationHours);
+            }
+            else
+            {
+                // Handle error
+                throw new Exception("Failed to retrieve distance and duration from Google Maps API.");
             }
         }
     }
