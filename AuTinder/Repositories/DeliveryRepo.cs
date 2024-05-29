@@ -57,10 +57,10 @@ namespace AuTinder.Repositories
             Sql.Insert(query, args =>
             {
                 args.Add("?Duration", delivery.Duration);
-                args.Add("?fk_delivery_status", delivery.DeliveryStatus);
+                args.Add("?fk_delivery_status", delivery.Status);
                 args.Add("?Length", delivery.Length);
-                args.Add("?Address_to", delivery.Address_to);
-                args.Add("?Address_from", delivery.Address_from);
+                args.Add("?Address_to", delivery.AddressTo);
+                args.Add("?Address_from", delivery.AddressFrom);
             });
         }
 
@@ -129,10 +129,10 @@ namespace AuTinder.Repositories
             {
                 item.Id = extractor.From<int>("ID");
                 item.Duration = extractor.From<int>("Duration");
-                item.DeliveryStatus = MapToDeliveryStatus(extractor.From<int>("fk_delivery_status"));
+                item.Status = MapToDeliveryStatus(extractor.From<int>("fk_delivery_status"));
                 item.Length = extractor.From<int>("Length");
-                item.Address_to = extractor.From<string>("Address_to");
-                item.Address_from = extractor.From<string>("Address_from");
+                item.AddressTo = extractor.From<string>("Address_to");
+                item.AddressFrom = extractor.From<string>("Address_from");
 
             });
 
@@ -209,7 +209,7 @@ namespace AuTinder.Repositories
                 Address_from = ?Address_from
             WHERE ID = ?id";
 
-            int delivery_Status = GetDeliveryStatusFromEnum(delivery.DeliveryStatus);
+            int delivery_Status = GetDeliveryStatusIdFromEnum(delivery.Status);
 
             Sql.Update(query, args =>
             {
@@ -217,8 +217,8 @@ namespace AuTinder.Repositories
                 args.Add("?Duration", delivery.Duration);
                 args.Add("?fk_delivery_status", delivery_Status); // Assuming DeliveryStatus has an Id property
                 args.Add("?Length", delivery.Length);
-                args.Add("?Address_to", delivery.Address_to);
-                args.Add("?Address_from", delivery.Address_from);
+                args.Add("?Address_to", delivery.AddressTo);
+                args.Add("?Address_from", delivery.AddressFrom);
             });
         }
 
@@ -326,7 +326,7 @@ namespace AuTinder.Repositories
             var deliveriesWithOrders = Sql.MapAll<Delivery>(rows, (extractor, item) =>
             {
                 item.Id = extractor.From<int>("delivery_id");
-                item.TimeToDeliveredInMinutes = extractor.From<int>("duration");
+                item.Duration = extractor.From<int>("duration");
                 item.Status = extractor.From<DeliveryStatus>("fk_delivery_status");
                 item.Length = extractor.From<int>("length");
                 item.AddressTo = extractor.From<string>("address_to");
@@ -364,7 +364,7 @@ namespace AuTinder.Repositories
             var deliveriesWithOrders = Sql.MapOne<Delivery>(rows, (extractor, item) =>
             {
                 item.Id = extractor.From<int>("delivery_id");
-                item.TimeToDeliveredInMinutes = extractor.From<int>("duration");
+                item.Duration = extractor.From<int>("duration");
                 item.Status = extractor.From<DeliveryStatus>("fk_delivery_status");
                 item.Length = extractor.From<int>("length");
                 item.AddressTo = extractor.From<string>("address_to");
@@ -428,10 +428,9 @@ namespace AuTinder.Repositories
 
             });
             var deliveries = Sql.MapAll<Delivery>(rows, (extractor, item) =>
-            private static DeliveryStatus MapToDeliveryStatus(int statusId)
             {
                 item.Id = extractor.From<int>("delivery_id");
-                item.TimeToDeliveredInMinutes = extractor.From<int>("duration");
+                item.Duration = extractor.From<int>("duration");
                 item.Status = extractor.From<DeliveryStatus>("fk_delivery_status");
                 item.Length = extractor.From<int>("length");
                 item.AddressTo = extractor.From<string>("address_to");
@@ -487,16 +486,16 @@ namespace AuTinder.Repositories
 
             var seenDeliveriesRows = Sql.MapAll<SeenDelivery>(rows, (extractor, item) =>
             {
-                item.DeliveryID = extractor.From<int>("fk_delivery");
-                item.UserID = extractor.From<int>("fk_user");
-                item.Liked = extractor.From<bool>("liked");
+                item.DeliveryI = extractor.From<int>("fk_delivery");
+                item.UserId = extractor.From<int>("fk_user");
+                item.liked = extractor.From<bool>("liked");
             });
 
             foreach (var seenDelivery in seenDeliveriesRows)
             {
-                if (seenDelivery.Liked)
+                if (seenDelivery.liked)
                 {
-                    seenDelivery.delivery = DeliveryRepo.GetDelivery(seenDelivery.DeliveryID);
+                    seenDelivery.Delivery = DeliveryRepo.GetDelivery(seenDelivery.DeliveryId);
                     seenDeliveries.Add(seenDelivery);
                 }
             }

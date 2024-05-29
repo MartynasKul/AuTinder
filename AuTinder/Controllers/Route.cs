@@ -88,10 +88,10 @@ namespace AuTinder.Controllers
 
             var seenDelivery = new SeenDelivery
             {
-                DeliveryID = delivery.Id,
-                UserID = 1, // Replace with logic to get the current user's ID
-                Liked = true, // Determine if the user liked this delivery
-                delivery = delivery
+                DeliveryId = delivery.Id,
+                UserId = 1, // Replace with logic to get the current user's ID
+                liked = true, // Determine if the user liked this delivery
+                Delivery = delivery
             };
 
             return View(seenDelivery);

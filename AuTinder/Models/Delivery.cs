@@ -12,7 +12,7 @@
         }
 
         public int Id { get; set; }
-        public int TimeToDeliveredInMinutes { get; set; }
+        public int Duration { get; set; }
         public DeliveryStatus Status { get; set; }
         public int Length { get; set; }
         public string AddressFrom { get; set; }
@@ -22,20 +22,20 @@
 
         #region Constructors
         public Delivery() { }
-        public Delivery(int id, int timetodeliveredinminutes, DeliveryStatus status, int length, string addressfrom, string addressto, Order order) 
+        public Delivery(int id, int duration, DeliveryStatus status, int length, string addressfrom, string addressto, Order order) 
         {
             Id = id;
-            TimeToDeliveredInMinutes = timetodeliveredinminutes;
+            Duration = duration;
             Status = status;
             Length = length;
             AddressFrom = addressfrom;
             AddressTo = addressto;
             Order = order;
         }
-        public Delivery(int id, int timetodeliveredinminutes, DeliveryStatus status, int length, string addressfrom, string addressto, User user, Order order)
+        public Delivery(int id, int duration, DeliveryStatus status, int length, string addressfrom, string addressto, User user, Order order)
         {
             Id = id;
-            TimeToDeliveredInMinutes = timetodeliveredinminutes;
+            Duration = duration;
             Status = status;
             Length = length;
             AddressFrom = addressfrom;
@@ -56,7 +56,7 @@
 
             int matchCount = 0;
 
-            if ((this.TimeToDeliveredInMinutes - other.TimeToDeliveredInMinutes) <= 60) matchCount++;
+            if ((this.Duration - other.Duration) <= 60) matchCount++;
             if ((this.Length - other.Length) <= 30) matchCount++;
             if ((this.Order.Price - other.Order.Price) <= 200) matchCount++;
 
@@ -72,7 +72,7 @@
                 return repeats;
 
 
-            if ((this.TimeToDeliveredInMinutes - other.TimeToDeliveredInMinutes) <= 60) repeats[0]++;
+            if ((this.Duration - other.Duration) <= 60) repeats[0]++;
             if ((this.Length - other.Length) <= 30) repeats[1]++;
             if (Math.Abs(this.Order.Price - other.Order.Price) <= 200) repeats[2]++;
 
