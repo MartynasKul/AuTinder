@@ -1,0 +1,37 @@
+﻿
+@{
+    ViewData["Title"] = "LikedDeliveries";
+}
+
+<h1>LikedDeliveries</h1>
+
+@foreach (SeenDelivery item in Model)
+{
+    <div>
+        <h4>Delivery ID: @Html.DisplayFor(modelItem => item.DeliveryID)</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">User ID</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => item.UserID)</dd>
+
+            <dt class="col-sm-2">Liked</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => item.DeliveryID)</dd>
+
+            <dt class="col-sm-2">Deliver from</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => item.delivery.Address_from)</dd>
+
+            <dt class="col-sm-2">Deliver to</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => item.delivery.Address_to)</dd>
+
+            <dt class="col-sm-2">Delivery Length</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => item.delivery.Length)</dd>
+
+            <!-- Add more delivery details as needed -->
+        </dl>
+        <div>
+
+            @Html.ActionLink("Details", "LikedDelivery", new { deliveryId = item.DeliveryID }) |
+            @Html.ActionLink("Delete", "Delete", new { id = item.DeliveryID })
+        </div>
+    </div>
+}

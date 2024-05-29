@@ -1,7 +1,10 @@
-﻿using AuTinder.Models;
+﻿using Microsoft.AspNetCore.Mvc;
+using Org.BouncyCastle.Bcpg.OpenPgp;
+using AuTinder.Models;
 using K4os.Compression.LZ4.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace AuTinder.Controllers
 {
@@ -123,10 +126,10 @@ namespace AuTinder.Controllers
                 for (int i = 0; i < 3; i++)
                 {
                     if (repeatsTotal[i] > 0)
-                    {
+        {
                         score = score + (repeatsLiked[i] / repeatsTotal[i]);
                         score = score - (repeatsDisliked[i] / repeatsTotal[i]);
-                    }
+        }
 
 
                 }
@@ -135,6 +138,12 @@ namespace AuTinder.Controllers
             if (score > 0)
                 return true;
             return false;
+        }
+
+        public List<SeenDelivery> ShowLikedDeliveries()
+        {
+            List<SeenDelivery> del = DeliveryRepo.GetLikedDeliveries(1);
+            return del;
         }
 
         [HttpPost]

@@ -1,0 +1,110 @@
+﻿@model AuTinder.Models.SeenDelivery
+
+@{
+    ViewData["Title"] = "LikedDelivery";
+}
+
+<h1>LikedDelivery</h1>
+
+<div>
+    <h4>SeenDelivery</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.DeliveryID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.DeliveryID)
+        </dd>
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.UserID)
+        </dt>
+        <dd class="col-sm-10">
+            @Html.DisplayFor(model => model.UserID)
+        </dd>
+        @if (Model.delivery != null)
+        {
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.delivery.Address_from)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.delivery.Address_from)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.delivery.Address_to)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.delivery.Address_to)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.delivery.Length)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.delivery.Length)
+            </dd>
+            <!-- Add more delivery details as needed -->
+        }
+    </dl>
+</div>
+<div>
+    @Html.ActionLink("Add to Delivery Route", "GetLikedDeliveries") |
+    @Html.ActionLink("Back to List", "GetLikedDeliveries")
+</div>
+
+                
+<style>
+    #map {
+        height: 600px;
+        width: 100%;
+    }
+</style>
+<body>
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhXXLqtEuPoqNOWZZ4OqkNq4ptNREb2Zs&libraries=places&callback=initMap" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 7,
+                center: { lat: 41.85, lng: -87.65 } // Default center (Chicago)
+            });
+            directionsRenderer.setMap(map);
+
+            var start = '@Model.delivery.Address_from';
+            var end = '@Model.delivery.Address_to';
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            };
+            directionsService.route(request, function (result, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(result);
+                    var route = result.routes[0].legs[0];
+                    var distance = route.distance.text;
+                    var duration = route.duration.text;
+                    document.getElementById('distance').innerText = route.distance.text;
+                    document.getElementById('duration').innerText = route.duration.text;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("StoreRouteInfo", "Map")',
+                        data: {
+                            distance: distance,
+                            duration: duration
+                        },
+                        success: function (response) {
+                            console.log('Data sent successfully');
+                        },
+                        error: function (error) {
+                            console.log('Error sending data: ', error);
+                        }
+                    });
+                }
+            });
+
+        }
+    </script>
+</body>
