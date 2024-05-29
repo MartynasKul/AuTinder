@@ -92,18 +92,29 @@ namespace AuTinder.Controllers
 
         public AuTinder.Models.Order MakeOrderPremium(AuTinder.Models.Order order)
         {
-           
+           if(order.OrderType == OrderType.Premium)
+            {
+                return order;
+            }
             order.OrderType = OrderType.Premium;
+            order.AverageTime = _timeController.GetAverageTime(order).Result;
             decimal price = AddDriversPrice(order.Ad.Price, order.Delivery.Length, order.OrderType);
             order.Price = price;
-            order.AverageTime = _timeController.GetAverageTime(order).Result;
-            Console.WriteLine(order.AverageTime);
             return order;
+        }
+
+        public bool CheckType(OrderType type)
+        {
+            if (type != OrderType.Premium)
+            {
+                return true;
+            }
+            return false;
         }
 
         private decimal AddDriversPrice(decimal price, decimal distance, OrderType type)
         {
-            if(type == OrderType.Simple)
+            if(CheckType(type))
             {
                 price = price + distance * 10;
             }
