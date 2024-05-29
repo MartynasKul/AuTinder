@@ -185,7 +185,10 @@ namespace AuTinder.Controllers
         public IActionResult OpenMainView()
         {
             List<Ad> ads = null;
-
+            if (TempData.ContainsKey("NoAds"))
+            {
+                ViewBag.NoAds = TempData["NoAds"];
+            }
             if (TempData.ContainsKey("Ads"))
             {
                 // Retrieve the JSON string from TempData
