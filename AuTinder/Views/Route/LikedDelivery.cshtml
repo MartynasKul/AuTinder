@@ -6,6 +6,8 @@
 
 <h1>LikedDelivery</h1>
 
+
+
 <div>
     <h4>SeenDelivery</h4>
     <hr />
@@ -47,7 +49,7 @@
     </dl>
 </div>
 <div>
-    @Html.ActionLink("Add to Delivery Route", "GetLikedDeliveries") |
+    @Html.ActionLink("Add to Delivery Route", "AddDeliveryToRoute", "Delivery", new { id = Model.DeliveryId }) |
     @Html.ActionLink("Back to List", "GetLikedDeliveries")
 </div>
 

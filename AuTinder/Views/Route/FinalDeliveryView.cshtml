@@ -1,0 +1,124 @@
+﻿@model List<AuTinder.Models.Delivery>
+
+@{
+    ViewData["Title"] = "Liked Deliveries";
+}
+
+<h1>Liked Deliveries</h1>
+
+<div id="map" style="height: 600px; width: 100%;"></div>
+
+@foreach (var delivery in Model)
+{
+    <div>
+        <h4>Delivery ID: @Html.DisplayFor(modelItem => delivery.Id)</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(modelItem => delivery.AddressFrom)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => delivery.AddressFrom)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(modelItem => delivery.AddressTo)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => delivery.AddressTo)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(modelItem => delivery.Length)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => delivery.Length)
+            </dd>
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(modelItem => delivery.Duration)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(modelItem => delivery.Duration)
+            </dd>
+            <!-- Add more delivery details as needed -->
+        </dl>
+    </div>
+    
+}
+
+<a asp-controller="Route" asp-action="EndRoute" class="btn btn-primary">End Delivery</a>
+
+@section Scripts {
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhXXLqtEuPoqNOWZZ4OqkNq4ptNREb2Zs&libraries=places&callback=initMap" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 7,
+                center: { lat: 41.85, lng: -87.65 } // Default center (Chicago)
+            });
+            directionsRenderer.setMap(map);
+
+            var addresses = [];
+
+        @foreach (var delivery in Model)
+        {
+            <text>
+                    addresses.push("@delivery.AddressFrom");
+                addresses.push("@delivery.AddressTo");
+            </text>
+            ;
+        }
+
+                    if (addresses.length < 2) {
+                alert("Not enough addresses to create a route.");
+                return;
+            }
+
+            var waypoints = [];
+            for (var i = 1; i < addresses.length - 1; i++) {
+                waypoints.push({
+                    location: addresses[i],
+                    stopover: true
+                });
+            }
+
+            var request = {
+                origin: addresses[0],
+                destination: addresses[addresses.length - 1],
+                waypoints: waypoints,
+                travelMode: 'DRIVING'
+            };
+
+            directionsService.route(request, function (result, status) {
+                if (status === 'OK') {
+                    directionsRenderer.setDirections(result);
+                    var route = result.routes[0].legs[0];
+                    var distance = route.distance.text;
+                    var duration = route.duration.text;
+                    document.getElementById('distance').innerText = distance;
+                    document.getElementById('duration').innerText = duration;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("StoreRouteInfo", "Map")',
+                        data: {
+                            distance: distance,
+                            duration: duration
+                        },
+                        success: function (response) {
+                            console.log('Data sent successfully');
+                        },
+                        error: function (error) {
+                            console.log('Error sending data: ', error);
+                        }
+                    });
+                } else {
+                    alert('Directions request failed due to ' + status);
+                }
+            });
+        }
+    </script>
+}
+
+
