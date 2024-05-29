@@ -100,6 +100,7 @@ namespace AuTinder.Controllers
         public IActionResult Store(Ad ad)
         {
             bool good = Validate();
+            CalculateScore(ad);
             if (ModelState.IsValid && good)
             {
                 try
@@ -281,5 +282,191 @@ namespace AuTinder.Controllers
 
             return Ok(); // Return a successful response
         }
+
+
+        #region Automobilio_ivercio_skaiciavimas
+
+        /// <summary>
+        /// funny score counting method
+        /// </summary>
+        /// <returns></returns>
+        public void CalculateScore(Ad ad)
+        {
+            User user = UserRepo.GetUserById(1);
+            double score = 0;
+
+            int orderCount = ReadHistory(user);
+
+            if (orderCount > 5)
+            {
+                score = AddPoints(5, score);
+            }
+            else
+            {
+                score = AddPoints(1, score);
+            }
+
+            DateTime caryear = GetCarYear(ad.Car);
+            DateTime cutoff = new DateTime(1990, 1, 1);
+
+            if (caryear > new DateTime(1990, 1, 1))
+            {
+                score = AddPoints(((caryear.Year - cutoff.Year) / 5), score);
+            }
+            else
+            {
+                score = AddPoints(1, score);
+            }
+
+            DateTime ta = GetTaInfo(ad.Car);
+
+            if (ta > DateTime.Today)
+            {
+                score = AddPoints(1, score);
+            }
+
+            string features = GetCarSafetyFeatures(ad.Car);
+            string[] feat = features.Split(',');
+
+            if (feat.Length > 0)
+            {
+                score = AddPoints(feat.Length, score);
+            }
+
+            if (GetCarPower(ad.Car) > 200)
+            {
+                score = AddPoints(3, score);
+            }
+            else if (GetCarPower(ad.Car) > 100 && GetCarPower(ad.Car) <= 200)
+            {
+                score = AddPoints(2, score);
+            }
+            else
+            {
+                score = AddPoints(1, score);
+            }
+
+            string description = GetDescription(ad);
+
+            string result = CompareDescriptionWithHardCodedStatements(description);
+            string[] res = result.Split(",");
+
+            if (res[0] == "More positive")
+            {
+                int pointsToAdd = Convert.ToInt32((string)res[1]);
+                score = AddPoints(pointsToAdd, score);
+            }
+            else if (res[0] == "More negative")
+            {
+                int pointsToAdd = Convert.ToInt32((string)res[1]);
+                score = DecreasePoints(pointsToAdd, score);
+            }
+            else
+            {
+                // nieko nedaro nes nesugalvota ig
+            }
+
+            score = AverageOutPoints(6, score);
+
+
+            ad.Car.Rating = Convert.ToSingle(score);
+        }
+
+        // Predefined lists of positive and negative words
+        private static readonly HashSet<string> PositiveWords = new HashSet<string>
+        {
+            "excellent", "great", "amazing", "fantastic", "good", "reliable", "comfortable",
+            "perfect", "wonderful", "affordable", "low-mileage", "clean", "like-new", "well-maintained"
+        };
+
+        private static readonly HashSet<string> NegativeWords = new HashSet<string>
+        {
+            "bad", "poor", "terrible", "broken", "damaged", "expensive", "unreliable", "uncomfortable",
+            "dirty", "old", "high-mileage", "rusty", "noisy", "problematic"
+        };
+        public int ReadHistory(User user) 
+        {
+            return user.OrderCount;
+        }
+
+        public double AddPoints(int point, double currentPoints) 
+        {
+            return currentPoints += point;
+        }
+        public double DecreasePoints(int point, double currentPoints)
+        {
+            return currentPoints -= point;
+        }
+        public double AverageOutPoints(int avgamount, double score) 
+        {
+            return score/avgamount;
+        }
+
+        public User GetUserInfo(User user) 
+        {
+            return user;
+        }
+
+        public DateTime GetCarYear(Car car) 
+        {
+            return car.Year;
+        }
+
+        public DateTime GetTaInfo(Car car) 
+        {
+            return car.Inspection;
+        }
+        public string GetCarSafetyFeatures(Car car)
+        {
+            return car.ExtraFunc;
+        }
+        public int GetCarPower(Car car) 
+        {
+            return car.Power;
+        }
+
+        public string GetDescription(Ad ad) 
+        {
+            return ad.Description;
+        }
+
+        public static string CompareDescriptionWithHardCodedStatements(string description)
+        {
+            // Normalize the description to lowercase and split into words
+            string[] words = description.ToLower().Split(new char[] { ' ', '.', ',', '!', '?' }, StringSplitOptions.RemoveEmptyEntries);
+
+            int positiveCount = 0;
+            int negativeCount = 0;
+
+            // Count the occurrences of positive and negative words
+            foreach (string word in words)
+            {
+                if (PositiveWords.Contains(word))
+                {
+                    positiveCount++;
+                }
+                else if (NegativeWords.Contains(word))
+                {
+                    negativeCount++;
+                }
+            }
+
+            // Determine which count is higher
+            if (positiveCount > negativeCount)
+            {
+                return "More positive,"+positiveCount;
+            }
+            else if (negativeCount > positiveCount)
+            {
+                return "More negative,"+negativeCount;
+            }
+            else
+            {
+                return "Neutral";
+            }
+        }
+
+        #endregion
+
     }
 }

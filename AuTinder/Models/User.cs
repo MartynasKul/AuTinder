@@ -1,13 +1,34 @@
-﻿namespace AuTinder.Models
+﻿using Mysqlx.Expr;
+using PayPalCheckoutSdk.Orders;
+
+namespace AuTinder.Models
 {
     public class User
     {
         public int Id { get; set; }
-        public bool driver { get; set; }
-        public string email { get; set; }
-        public string name { get; set; }
-        public string surname { get; set; }
-        public string phone { get; set; }
+        public bool Driver { get; set; }
+        public string Email { get; set; }
+        public string Name { get; set; }
+        public string Surname { get; set; }
+        public string Phone { get; set; }
         public string Address { get; set; }
+        public int SearchDistance { get; set; }
+        public int AdCount { get; set; }
+        public int OrderCount { get; set; }
+
+        public User(int id, bool driver, string email, string name, string surname, string phone, string address, int searchDistance, int adCount, int orderCount)
+        {
+            Id = id;
+            Driver = driver;
+            Email = email;
+            Name = name;
+            Surname = surname;
+            Phone = phone;
+            Address = address;
+            SearchDistance = searchDistance;
+            AdCount = adCount;
+            OrderCount = orderCount;
+        }
+        public User() { }
     }
 }

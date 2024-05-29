@@ -333,7 +333,7 @@ public class AdRepo
                 SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position"),
                 OutsideState = extractor.From<string>("outside_condition"),
                 ExtraFunc = extractor.From<string>("additional_functions"),
-                Rating = extractor.From<int>("value")
+                Rating = Convert.ToSingle(extractor.From<decimal>("value"))
             };
             item.Address = extractor.From<string>("Address");
         });
@@ -379,7 +379,7 @@ public class AdRepo
                 SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position"),
                 OutsideState = extractor.From<string>("outside_condition"),
                 ExtraFunc = extractor.From<string>("additional_functions"),
-                Rating = extractor.From<int>("value")
+                Rating = Convert.ToSingle(extractor.From<decimal>("value"))
             };
             item.Address = extractor.From<string>("Address");
         });
@@ -478,7 +478,7 @@ public class AdRepo
             item.SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position");
             item.OutsideState = extractor.From<string>("outside_condition");
             item.ExtraFunc = extractor.From<string>("additional_functions");
-            item.Rating = extractor.From<int>("value");
+            item.Rating = Convert.ToSingle(extractor.From<decimal>("value"));
         });
 
         return cars;
