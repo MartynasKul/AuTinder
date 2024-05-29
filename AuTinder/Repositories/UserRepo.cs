@@ -124,7 +124,7 @@ public class UserRepo
 
         return users;
     }
-    public static List<User> GetAllDrivers()
+    public static List<User> GetDrivers()
     {
         string query = @"
         SELECT id, email, name, surname, phone, Address, search_distance, AdCount, OrderCount, Date
