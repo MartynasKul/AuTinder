@@ -46,10 +46,10 @@
         #endregion
 
         public int CompareDeliveries(Delivery other)
-        {
+    {
             if (other == null)
                 return 0;
-
+       
             if (this.Order == null || other.Order == null)
                 return 0;
 
@@ -61,10 +61,10 @@
             if ((this.Order.Price - other.Order.Price) <= 200) matchCount++;
 
             return matchCount;
-        }
+    }
 
         public List<int> CompareRpeatsInDeliveries(Delivery other, List<int> repeats)
-        {
+    {
             if (other == null)
                 return repeats;
 

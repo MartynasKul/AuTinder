@@ -1,0 +1,47 @@
+﻿@{
+    ViewData["Title"] = "LikedAdView";
+}
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <div class="alert alert-success" role="alert">
+        @ViewBag.Message
+    </div>
+}
+@foreach (Ad ad in Model)
+{
+    <div>
+        <h4>@Html.DisplayFor(modelItem => ad.Description)</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">Description</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.Description)</dd>
+
+            <dt class="col-sm-2">Price</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.Price)</dd>
+
+            <dt class="col-sm-2">Ordered</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.IsOrdered)</dd>
+
+            <dt class="col-sm-2">Make</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.Car.Make)</dd>
+
+            <dt class="col-sm-2">Model</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.Car.Model)</dd>
+
+            <dt class="col-sm-2">Fuel Type</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.Car.FuelType)</dd>
+
+            <dt class="col-sm-2">Year</dt>
+            <dd class="col-sm-10">@ad.Car.Year.ToString("yyyy")</dd>
+
+            <dt class="col-sm-2">Mileage</dt>
+            <dd class="col-sm-10">@Html.DisplayFor(modelItem => ad.Car.Mileage)</dd>
+
+            <!-- Add more car details as needed -->
+        </dl>
+        <div>
+            @Html.ActionLink("Details", "Ad", new { id = ad.ID }) |
+            @* <a asp-action="Index">Back to List</a> *@
+        </div>
+    </div>
+}

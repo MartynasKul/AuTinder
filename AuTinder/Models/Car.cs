@@ -2,48 +2,48 @@
 {
     public enum BodyType
     {
-        Sedan,
-        Hatchback,
-        Universal,
-        Single,
-        SUVCrossover,
-        Coupe,
-        Commercial,
-        Convertible,
-        Limousine,
-        Pickup,
-        PassengerMinibus,
-        CargoMinibus,
-        Other
+        Sedan = 1,
+        Hatchback = 2,
+        Universal = 3,
+        Single = 4,
+        SUVCrossover = 5,
+        Coupe = 6,
+        Commercial = 7,
+        Convertible = 8,
+        Limousine = 9,
+        Pickup = 10,
+        PassengerMinibus = 11,
+        CargoMinibus = 12,
+        Other = 13,
     }
     public enum FuelType
     {
-        Diesel,
-        DieselElectric,
-        Petrol,
-        PetrolGas,
-        PetrolElectric,
-        PetrolElectricGas,
-        Electric,
-        BioethanolE85,
-        Hydrogen,
-        Other
+        Diesel = 1,
+        DieselElectric = 2,
+        Petrol = 3,
+        PetrolGas = 4,
+        PetrolElectric = 5,
+        PetrolElectricGas = 6,
+        Electric = 7,
+        BioethanolE85 = 8,
+        Hydrogen = 9,
+        Other = 10
     }
     public enum DriveWheels
     {
-        Front,
-        Rear,
-        All
+        Front = 1,
+        Rear = 2,
+        All = 3
     }
     public enum Gearbox
     {
-        Manual,
-        Automatic
+        Manual = 1,
+        Automatic = 2
     }
     public enum SteeringWheelLocation
     {
-        Left,
-        Right
+        Left = 1,
+        Right = 2
     }
 
 
@@ -65,6 +65,8 @@
         public string OutsideState {  get; set; }
         public string ExtraFunc {  get; set; }
         public float Rating {  get; set; }
+
+        public int UserId { get; set; }
 
         #region Constructors
         public Car() { }
@@ -89,6 +91,29 @@
             OutsideState = outsideState;
             ExtraFunc = extraFunc;
             Rating = rating;
+        }
+
+        public Car(int id, string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
+            int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
+            int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating, int userid)
+        {
+            Id = id;
+            Make = make;
+            Model = model;
+            BodyType = bodyType;
+            Year = year;
+            FuelType = fuelType;
+            Mileage = mileage;
+            Color = color;
+            Inspection = inspection;
+            DriveWheels = driveWheels;
+            Gearbox = gearbox;
+            Power = power;
+            SteeringWheelLocation = steeringWheelLocation;
+            OutsideState = outsideState;
+            ExtraFunc = extraFunc;
+            Rating = rating;
+            UserId = userid;
         }
         #endregion
 
