@@ -13,14 +13,15 @@ namespace AuTinder.Controllers
         private readonly ILogger<Route> _logger;
         private AdController _adController;
         private OrderController _orderController;
-
         private UserController _userController;
+        private DeliveryController _deliveryController;
         private readonly IConfiguration _configuration;
         public Route(ILogger<Route> logger)
         {
             _adController = new AdController();
             _orderController = new OrderController(_configuration);
             _userController = new UserController();
+            _deliveryController = new DeliveryController();
             _logger = logger;
         }
 
@@ -63,10 +64,30 @@ namespace AuTinder.Controllers
             return View(ad);
         }
 
+        // This action displays the details of a single liked delivery
+        public IActionResult LikedDelivery(int deliveryId)
+        {
+            var delivery = DeliveryRepo.GetDelivery(deliveryId);
+            if (delivery == null)
+            {
+                return NotFound();
+            }
+
+            var seenDelivery = new SeenDelivery
+            {
+                DeliveryID = delivery.Id,
+                UserID = 1, // Replace with logic to get the current user's ID
+                Liked = true, // Determine if the user liked this delivery
+                delivery = delivery
+            };
+
+            return View(seenDelivery);
+        }
+
         public IActionResult OpenOrderForm(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
-            if(_adController.ConfirmAdStatus(ad) == false)
+            if (_adController.ConfirmAdStatus(ad) == false)
             {
                 ad.IsOrdered = true;
                 return ShowOrderForm(ad);
@@ -129,6 +150,12 @@ namespace AuTinder.Controllers
             List<Ad> ads = _adController.GetLikedAds();
             Console.WriteLine(1);
             return View("LikedAdLIst", ads);
+        }
+        public IActionResult GetLikedDeliveries() 
+        {
+            List<SeenDelivery> del = _deliveryController.ShowLikedDeliveries();
+
+            return View("LikedDeliveries", del);
         }
 
         public IActionResult ShowOrderList()

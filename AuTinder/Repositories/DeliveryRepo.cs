@@ -134,5 +134,37 @@ namespace AuTinder.Repositories
                     throw new ArgumentException($"Unknown delivery status ID: {statusId}");
             }
         }
+
+        public static List<SeenDelivery> GetLikedDeliveries(int userId)
+        {
+            List<SeenDelivery> seenDeliveries = new List<SeenDelivery>();
+            string query = @"
+                SELECT sd.fk_delivery, sd.fk_user, sd.liked
+                FROM seendelivery sd
+                WHERE sd.fk_user = ?userId;";
+
+            var rows = Sql.Query(query, args =>
+            {
+                args.Add("?userId", userId);
+            });
+
+            var seenDeliveriesRows = Sql.MapAll<SeenDelivery>(rows, (extractor, item) =>
+            {
+                item.DeliveryID = extractor.From<int>("fk_delivery");
+                item.UserID = extractor.From<int>("fk_user");
+                item.Liked = extractor.From<bool>("liked");
+            });
+
+            foreach (var seenDelivery in seenDeliveriesRows)
+            {
+                if (seenDelivery.Liked)
+                {
+                    seenDelivery.delivery = DeliveryRepo.GetDelivery(seenDelivery.DeliveryID);
+                    seenDeliveries.Add(seenDelivery);
+                }
+            }
+
+            return seenDeliveries;
+        }
     }
 }
