@@ -13,33 +13,38 @@ namespace AuTinder.Controllers
     {
         private readonly HttpClient _httpClient;
         private readonly MapController _mapController;
+        private readonly DriverController _driverController;
 
         public TimeController()
         {
             _httpClient = new HttpClient();
-            _mapController = new MapController();  
+            _mapController = new MapController();
+            _driverController = new DriverController();
         }
 
 
         public async Task<int> GetAverageTime(Order order)
         {
-            List<User> drivers = UserRepo.GetAllDrivers();
+            List<User> drivers = _driverController.GetDriverList();
             Dictionary<int, (double distance, int duration)> distancesAndDurations = new Dictionary<int, (double distance, int duration)>();
             List<User> PremiumDrivers = CreateEmptyPremiumList();
             int AverageTime = 0;
             Console.WriteLine(drivers.Count());
             foreach (User driver in drivers)
             {
-                Console.WriteLine(driver.Name);
+
                 (double distance, int duration) = await _mapController.GetDistanceAndDuration(driver.Address, order.Ad.Address);
-                Console.WriteLine("Trip duration = " + duration);
-                duration += order.Delivery.Duration;
-                Console.WriteLine("Delivery duration += " + duration);
+
+                duration = AddTimeFromCarToBuyer(duration, order.Delivery.Duration);
+
                 distance = order.Delivery.Length;
-                duration = AddTimeEvery10h(duration);
-                Console.WriteLine("Time Every 10h += " + duration);
+                if(duration > 10)
+                {
+                    duration = AddTimeEvery10h(duration);
+                }
+                
                 duration = AddTimeBeforeTrip(driver,duration);
-                Console.WriteLine("Time before trip += " + duration);
+
                 if (order.OrderType == OrderType.Premium)
                 {
                     if(duration < order.AverageTime)
@@ -61,6 +66,11 @@ namespace AuTinder.Controllers
                 
 
             return AverageTime;
+        }
+
+        public int AddTimeFromCarToBuyer(int duration, int duration2)
+        {
+            return duration + duration2;
         }
 
         public int CalculateAverageTimeFromDriverList(List<User> drivers, Dictionary<int, (double distance, int duration)> distancesAndDurations)
