@@ -156,6 +156,11 @@ namespace AuTinder.Controllers
             List<Ad> unSeenAds = FilterSeenAds(ads, seenAds);
             List<Ad> recomendedAds = new List<Ad>();
             EvalueateAds(userPreferences, unSeenAds, recomendedAds, seenAds);
+            if (recomendedAds.Count == 0)
+            {
+                TempData["NoAds"] = "No ads available right now, try later";
+                return RedirectToAction("OpenMainView", "Route");
+            }
             string adsJson = JsonConvert.SerializeObject(recomendedAds);
 
             // Store the JSON string in TempData
