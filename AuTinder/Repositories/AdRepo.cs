@@ -1,6 +1,7 @@
 using AuTinder.Models;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
+using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
 using System.Drawing;
@@ -60,8 +61,8 @@ public class AdRepo
 
     private static void InsertAd(string description, decimal price, bool isOrdered, long carId)
     {
-        string adQuery = $@"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user)
-                           VALUES (?Description, ?Price, ?Ordered, ?Fk_Car, ?fk_user);";
+        string adQuery = $@"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user, Address)
+                           VALUES (?Description, ?Price, ?Ordered, ?Fk_Car, ?fk_user, ?Address);";
 
         // Execute the query to insert into Ad table
         Sql.Insert(adQuery, args =>
@@ -71,6 +72,7 @@ public class AdRepo
             args.Add("?Ordered", isOrdered);
             args.Add("?Fk_Car", carId);
             args.Add("?fk_user", 1); // Assuming fk_user is a foreign key to the user table
+            args.Add("?Address", "To be implemented");
         });
     }
 
@@ -300,7 +302,7 @@ public class AdRepo
     public static List<Ad> GetAllAds()
     {
         string query = @"
-        SELECT a.Id, a.Description, a.Price, a.Ordered, 
+        SELECT a.Id, a.Description, a.Price, a.Ordered, a.Address, 
                c.id AS CarId, c.make, c.model, c.fk_vechicle_type, c.year, c.fk_fuel_type, c.milage, c.color, 
                c.technical_inspection, c.fk_drive_types, c.fk_gear_box, c.power, c.fk_wheel_position, 
                c.outside_condition, c.additional_functions, c.value
@@ -314,6 +316,7 @@ public class AdRepo
             item.Description = extractor.From<string>("Description");
             item.Price = extractor.From<decimal>("Price");
             item.IsOrdered = extractor.From<bool>("Ordered");
+            item.Address = extractor.From<string>("Address");
             item.Car = new Car
             {
                 Id = extractor.From<int>("CarId"),
@@ -331,8 +334,9 @@ public class AdRepo
                 SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position"),
                 OutsideState = extractor.From<string>("outside_condition"),
                 ExtraFunc = extractor.From<string>("additional_functions"),
-                Rating = extractor.From<int>("value")
+                Rating = Convert.ToSingle(extractor.From<decimal>("value"))
             };
+            
         });
 
         return adsWithCars;
@@ -341,7 +345,7 @@ public class AdRepo
     public static Ad GetAdAndCarById(int id)
     {
         string query = @"
-        SELECT a.Id, a.Description, a.Price, a.Ordered, 
+        SELECT a.Id, a.Description, a.Price, a.Ordered, a.Address, 
                c.id AS CarId, c.make, c.model, c.fk_vechicle_type, c.year, c.fk_fuel_type, c.milage, c.color, 
                c.technical_inspection, c.fk_drive_types, c.fk_gear_box, c.power, c.fk_wheel_position, 
                c.outside_condition, c.additional_functions, c.value
@@ -376,8 +380,9 @@ public class AdRepo
                 SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position"),
                 OutsideState = extractor.From<string>("outside_condition"),
                 ExtraFunc = extractor.From<string>("additional_functions"),
-                Rating = extractor.From<int>("value")
+                Rating = Convert.ToSingle(extractor.From<decimal>("value"))
             };
+            item.Address = extractor.From<string>("Address");
         });
 
         return adsWithCars;
@@ -408,6 +413,39 @@ public class AdRepo
         }
 
         return seenAds;
+    }
+
+    public static List<Ad> GetLikedAds(int userId)
+    {
+        List<Ad> ads = new List<Ad>();
+        string query = @"
+            SELECT sa.fk_ad, sa.fk_user, sa.liked
+            FROM seenad sa
+            WHERE sa.fk_user = ?userId;";
+
+        var rows = Sql.Query(query, args =>
+        {
+            args.Add("?userId", userId);
+
+        });
+        var seenAds = Sql.MapAll<SeenAd>(rows, (extractor, item) =>
+        {
+            item.AdId = extractor.From<int>("fk_ad");
+            item.UserId = extractor.From<int>("fk_user");
+            item.liked = extractor.From<bool>("liked");
+        });
+
+        foreach (var ad in seenAds)
+        {
+            if(ad.liked == true)
+            {
+                ad.ad = GetAdAndCarById(ad.AdId);
+                ads.Add(ad.ad);
+            }
+
+        }
+
+        return ads;
     }
 
     public static List<Car> GetUserPreferences(int userId)
@@ -441,7 +479,7 @@ public class AdRepo
             item.SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position");
             item.OutsideState = extractor.From<string>("outside_condition");
             item.ExtraFunc = extractor.From<string>("additional_functions");
-            item.Rating = extractor.From<int>("value");
+            item.Rating = Convert.ToSingle(extractor.From<decimal>("value"));
         });
 
         return cars;

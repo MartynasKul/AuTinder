@@ -5,6 +5,165 @@ namespace AuTinder.Repositories
 {
     public class OrderRepo
     {
+        public static void CreatePayment(Payment payment)
+        {
+            string query = @"
+                INSERT INTO payment (Date, Paid)
+                VALUES (?Date, ?Paid);";
+
+            Sql.Insert(query, args =>
+            {
+                args.Add("?Date", payment.Date);
+                args.Add("?Paid", payment.Paid);
+            });
+        }
+
+
+        public static Payment GetPayment(int id)
+        {
+            string query = @"
+        SELECT p.Id, p.Date, p.Paid
+        FROM payment p
+        WHERE p.Id = ?id";
+
+            var rows = Sql.Query(query, args =>
+            {
+                args.Add("?id", id);
+            });
+
+            var payment = Sql.MapOne<Payment>(rows, (extractor, item) =>
+            {
+                item.Id = extractor.From<int>("Id");
+                item.Date = extractor.From<DateTime>("Date");
+                item.Paid = extractor.From<bool>("Paid");
+            });
+
+            return payment;
+        }
+
+        public static void UpdatePayment(int id, Payment payment)
+        {
+            Console.WriteLine(id);
+            string query = @"
+            UPDATE payment
+            SET Date = ?Date,
+                Paid = ?Paid
+            WHERE Id = ?id";
+
+            Sql.Update(query, args =>
+            {
+                args.Add("?id", id);
+                args.Add("?Date", payment.Date);
+                args.Add("?Paid", payment.Paid);
+            });
+        }
+
+        public static int GetLastInsertedPaymentId()
+        {
+            string query = @"
+        SELECT Id
+        FROM payment
+        ORDER BY Id DESC
+        LIMIT 1;";
+
+            // Execute the query to retrieve the last inserted ID
+            var result = Sql.Query(query);
+
+            // Check if any result is returned
+            if (result.Count == 0)
+            {
+                throw new Exception("No payment records found.");
+            }
+
+            // Extract the last inserted ID from the result
+            int lastInsertedId = Convert.ToInt32(result[0]["Id"]);
+
+            return lastInsertedId;
+        }
+
+        public static int GetLastInsertedOrderId()
+        {
+            string query = @"
+        SELECT ID
+        FROM orders
+        ORDER BY ID DESC
+        LIMIT 1;";
+
+            // Execute the query to retrieve the last inserted ID
+            var result = Sql.Query(query);
+
+            // Check if any result is returned
+            if (result.Count == 0)
+            {
+                throw new Exception("No order records found.");
+            }
+
+            // Extract the last inserted ID from the result
+            int lastInsertedId = Convert.ToInt32(result[0]["ID"]);
+
+            return lastInsertedId;
+        }
+
+        public static void UpdateOrder(int id, Order updatedOrder)
+        {
+            // Assuming orderId is the primary key of the order table
+            string query = @"
+            UPDATE orders
+            SET Date = ?Date,
+                fk_order_status = ?OrderStatus,
+                fk_order_type = ?OrderType,
+                fk_user = ?UserId,  -- Assuming you have a field for user ID in the order table
+                fk_ad = ?AdId,      -- Assuming you have a field for ad ID in the order table
+                fk_payment = ?PaymentId,
+                fk_delivery = ?DeliveryId,
+                Price = ?Price
+            WHERE ID = ?id";
+
+            Sql.Update(query, args =>
+            {
+                args.Add("?id", id);
+                args.Add("?Date", updatedOrder.Date);
+                args.Add("?OrderStatus", updatedOrder.OrderStatus);
+                args.Add("?OrderType", updatedOrder.OrderType);
+                args.Add("?UserId", 1);     // Replace UserId with the appropriate property
+                args.Add("?AdId", updatedOrder.Ad.ID);         // Replace AdId with the appropriate property
+                args.Add("?PaymentId", updatedOrder.Payment.Id);  // Assuming Payment has an Id property
+                args.Add("?DeliveryId", updatedOrder.Delivery.Id); // Assuming Delivery has an Id property
+                args.Add("?Price", updatedOrder.Price);
+            });
+        }
+
+
+        public static Order CreateOrder(Order order)
+        {
+
+            DeliveryRepo.CreateDelivery(order.Delivery);
+            int fk_delivery = DeliveryRepo.GetLastInsertedDeliveryId();
+            order.Delivery.Id = fk_delivery;
+
+            CreatePayment(order.Payment);
+            int fk_payment = GetLastInsertedPaymentId();
+            order.Payment.Id = fk_payment;
+
+            string query = @"
+                INSERT INTO orders (Date, fk_order_status, fk_order_type, fk_user, fk_ad, fk_payment, fk_delivery, Price)
+                VALUES (?Date, ?fk_order_status, ?fk_order_type, ?fk_user, ?fk_ad, ?fk_payment, ?fk_delivery, ?Price);";
+
+            Sql.Insert(query, args =>
+            {
+                args.Add("?Date", order.Date);
+                args.Add("?fk_order_status", order.OrderStatus);
+                args.Add("?fk_order_type", order.OrderType);
+                args.Add("?fk_user", 1);
+                args.Add("?fk_ad", order.Ad.ID);
+                args.Add("?fk_payment", fk_payment);
+                args.Add("?fk_delivery", fk_delivery);
+                args.Add("?Price", order.Price);// Assuming fk_user is a foreign key to the user table
+            });
+
+            return order;
+        }
+
         public static List<Order> GetOrders()
         {
             string query = @"
