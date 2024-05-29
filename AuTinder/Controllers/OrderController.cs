@@ -13,13 +13,13 @@ namespace AuTinder.Controllers
     {
 
         private readonly IConfiguration _configuration;
-
+        private readonly MapController _mapController;
 
         public OrderController(IConfiguration configuration)
         {
             _configuration = configuration;
+            _mapController = new MapController();
         }
-
 
         public IActionResult Index()
         {
@@ -69,15 +69,22 @@ namespace AuTinder.Controllers
             payment.Paid = false;
             payment.Date = DateTime.Now;
 
+            User user = UserRepo.GetUserById(1);
+
+            Console.WriteLine(user.Address);
+            Console.WriteLine(ad.Address);
             //Calculating distance
+            double distance = _mapController.GetDistance(ad.Address, user.Address).Result;
+            int dis = Convert.ToInt32(distance);
             delivery.Duration = 10;
-            delivery.Length = 10;
+            delivery.Length = dis;
+            delivery.Address_from = ad.Address;
+            delivery.Address_to = user.Address;
             order.Delivery = delivery;
             order.Payment = payment;
-            decimal distance = 1;
+            Console.WriteLine(distance);
 
-
-            decimal price = AddDriversPrice(ad.Price, distance, order.OrderType);
+            decimal price = AddDriversPrice(ad.Price, delivery.Length, order.OrderType);
             order.Price = price;
             return order;
         }
@@ -86,10 +93,7 @@ namespace AuTinder.Controllers
         {
            
             order.OrderType = OrderType.Premium;
-
-            //Calculating distance
-            decimal distance = 1;
-            decimal price = AddDriversPrice(order.Ad.Price, distance, order.OrderType);
+            decimal price = AddDriversPrice(order.Ad.Price, order.Delivery.Length, order.OrderType);
             order.Price = price;
             return order;
         }
