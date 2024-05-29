@@ -66,6 +66,8 @@
         public string ExtraFunc {  get; set; }
         public float Rating {  get; set; }
 
+        public int UserId { get; set; }
+
         #region Constructors
         public Car() { }
 
@@ -89,6 +91,29 @@
             OutsideState = outsideState;
             ExtraFunc = extraFunc;
             Rating = rating;
+        }
+
+        public Car(int id, string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
+            int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
+            int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating, int userid)
+        {
+            Id = id;
+            Make = make;
+            Model = model;
+            BodyType = bodyType;
+            Year = year;
+            FuelType = fuelType;
+            Mileage = mileage;
+            Color = color;
+            Inspection = inspection;
+            DriveWheels = driveWheels;
+            Gearbox = gearbox;
+            Power = power;
+            SteeringWheelLocation = steeringWheelLocation;
+            OutsideState = outsideState;
+            ExtraFunc = extraFunc;
+            Rating = rating;
+            UserId = userid;
         }
         #endregion
 

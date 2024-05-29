@@ -1,0 +1,98 @@
+﻿@model AuTinder.Models.Car
+
+@{
+    ViewData["Title"] = "View";
+}
+
+<h1>View</h1>
+
+<h4>Car</h4>
+<hr />
+<div class="row">
+    <div class="col-md-4">
+        <form asp-controller="User" asp-action="AddPreference">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-group">
+                <label asp-for="Make" class="control-label"></label>
+                <input asp-for="Make" class="form-control" />
+                <span asp-validation-for="Make" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Model" class="control-label"></label>
+                <input asp-for="Model" class="form-control" />
+                <span asp-validation-for="Model" class="text-danger"></span>
+            </div>
+            <div class="form-group"
+                <label asp-for="BodyType" class="control-label"></label>
+                <select asp-for="BodyType" asp-items="@Html.GetEnumSelectList<AuTinder.Models.BodyType>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Year" class="control-label"></label>
+                <input asp-for="Year" class="form-control" />
+                <span asp-validation-for="Year" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="FuelType" class="control-label"></label>
+                <select asp-for="FuelType" asp-items="@Html.GetEnumSelectList<AuTinder.Models.FuelType>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Mileage" class="control-label"></label>
+                <input asp-for="Mileage" class="form-control" />
+                <span asp-validation-for="Mileage" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Color" class="control-label"></label>
+                <input asp-for="Color" class="form-control" />
+                <span asp-validation-for="Color" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Inspection" class="control-label"></label>
+                <input asp-for="Inspection" class="form-control" />
+                <span asp-validation-for="Inspection" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="DriveWheels" class="control-label"></label>
+                <select asp-for="DriveWheels" asp-items="@Html.GetEnumSelectList<AuTinder.Models.DriveWheels>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Gearbox" class="control-label"></label>
+                <select asp-for="Gearbox" asp-items="@Html.GetEnumSelectList<AuTinder.Models.Gearbox>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="Power" class="control-label"></label>
+                <input asp-for="Power" class="form-control" />
+                <span asp-validation-for="Power" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SteeringWheelLocation" class="control-label"></label>
+                <select asp-for="SteeringWheelLocation" asp-items="@Html.GetEnumSelectList<AuTinder.Models.SteeringWheelLocation>()" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <label asp-for="OutsideState" class="control-label"></label>
+                <input asp-for="OutsideState" class="form-control" />
+                <span asp-validation-for="OutsideState" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExtraFunc" class="control-label"></label>
+                <input asp-for="ExtraFunc" class="form-control" />
+                <span asp-validation-for="ExtraFunc" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Rating" class="control-label"></label>
+                <input asp-for="Rating" class="form-control" />
+                <span asp-validation-for="Rating" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input type="submit" value="Create" class="btn btn-primary" />
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    <a asp-action="ShowPreferenceView">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

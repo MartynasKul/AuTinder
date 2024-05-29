@@ -1,0 +1,89 @@
+﻿@model IEnumerable<AuTinder.Models.Car>
+
+@{
+    ViewData["Title"] = "Preference View";
+}
+
+<h1>Preferences</h1>
+
+<p>
+    <a asp-action="CreatePreference" class="btn btn-primary">Add Preference</a>
+</p>
+
+<div id="successMessage" class="alert alert-success" style="display:none;">
+    Preference successfully deleted.
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>@Html.DisplayNameFor(model => model.Make)</th>
+            <th>@Html.DisplayNameFor(model => model.Model)</th>
+            <th>@Html.DisplayNameFor(model => model.BodyType)</th>
+            <th>@Html.DisplayNameFor(model => model.Year)</th>
+            <th>@Html.DisplayNameFor(model => model.FuelType)</th>
+            <th>@Html.DisplayNameFor(model => model.Mileage)</th>
+            <th>@Html.DisplayNameFor(model => model.Color)</th>
+            <th>@Html.DisplayNameFor(model => model.Inspection)</th>
+            <th>@Html.DisplayNameFor(model => model.DriveWheels)</th>
+            <th>@Html.DisplayNameFor(model => model.Gearbox)</th>
+            <th>@Html.DisplayNameFor(model => model.Power)</th>
+            <th>@Html.DisplayNameFor(model => model.SteeringWheelLocation)</th>
+            <th>@Html.DisplayNameFor(model => model.OutsideState)</th>
+            <th>@Html.DisplayNameFor(model => model.ExtraFunc)</th>
+            <th>@Html.DisplayNameFor(model => model.Rating)</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr id="row-@item.Id">
+                <td>@Html.DisplayFor(modelItem => item.Make)</td>
+                <td>@Html.DisplayFor(modelItem => item.Model)</td>
+                <td>@Html.DisplayFor(modelItem => item.BodyType)</td>
+                <td>@Html.DisplayFor(modelItem => item.Year)</td>
+                <td>@Html.DisplayFor(modelItem => item.FuelType)</td>
+                <td>@Html.DisplayFor(modelItem => item.Mileage)</td>
+                <td>@Html.DisplayFor(modelItem => item.Color)</td>
+                <td>@Html.DisplayFor(modelItem => item.Inspection)</td>
+                <td>@Html.DisplayFor(modelItem => item.DriveWheels)</td>
+                <td>@Html.DisplayFor(modelItem => item.Gearbox)</td>
+                <td>@Html.DisplayFor(modelItem => item.Power)</td>
+                <td>@Html.DisplayFor(modelItem => item.SteeringWheelLocation)</td>
+                <td>@Html.DisplayFor(modelItem => item.OutsideState)</td>
+                <td>@Html.DisplayFor(modelItem => item.ExtraFunc)</td>
+                <td>@Html.DisplayFor(modelItem => item.Rating)</td>
+                <td>
+                    @Html.ActionLink("Edit", "EditPreference", new { id = item.Id }) |
+                    <a href="javascript:void(0);" onclick="confirmDelete(@item.Id)">Delete</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@section Scripts {
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script>
+        function confirmDelete(id) {
+            if (confirm('Are you sure you want to delete this preference?')) {
+                deletePreference(id);
+            }
+        }
+
+        function deletePreference(id) {
+            $.ajax({
+                url: '@Url.Action("DeletePreference", "User")/' + id,
+                type: 'DELETE',
+                success: function (result) {
+                    $('#row-' + id).remove();
+                    $('#successMessage').show().delay(3000).fadeOut();
+                },
+                error: function (xhr, status, error) {
+                    alert('An error occurred while deleting the preference: ' + error);
+                }
+            });
+        }
+    </script>
+}

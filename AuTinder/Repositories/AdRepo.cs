@@ -86,7 +86,7 @@ public class AdRepo
         UpdateAd(adid, description, price, isOrdered);
     }
 
-    private static long UpdateCar(int id, string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
+    public static long UpdateCar(int id, string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
      int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
      int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating)
     {
@@ -140,7 +140,7 @@ public class AdRepo
         return carId; // Return the car ID
     }
 
-    private static void UpdateAd(int id, string description, decimal price, bool isOrdered)
+    public static void UpdateAd(int id, string description, decimal price, bool isOrdered)
     {
         string adQuery = $@"UPDATE ad 
                     SET Description = ?Description, 
@@ -447,6 +447,58 @@ public class AdRepo
         return cars;
     }
 
+    public static Car GetUserPreferenceByPreferenceId(int carId)
+    {
+        string query = @"
+        SELECT id AS CarId, make, model, fk_vechicle_type, year, fk_fuel_type, milage, color, 
+               technical_inspection, fk_drive_types, fk_gear_box, power, fk_wheel_position, 
+               outside_condition, additional_functions, value, fk_user
+        FROM car
+        WHERE id =  ?carId;";
+
+        var rows = Sql.Query(query, args =>
+        {
+            args.Add("?carId", carId);
+
+        });
+        Car car = Sql.MapOne<Car>(rows, (extractor, item) =>
+        {
+            item.Id = extractor.From<int>("CarId");
+            item.Make = extractor.From<string>("make");
+            item.Model = extractor.From<string>("model");
+            item.BodyType = extractor.From<BodyType>("fk_vechicle_type");
+            item.Year = extractor.From<DateTime>("year");
+            item.FuelType = extractor.From<FuelType>("fk_fuel_type");
+            item.Mileage = extractor.From<int>("milage");
+            item.Color = extractor.From<string>("color");
+            item.Inspection = extractor.From<DateTime>("technical_inspection");
+            item.DriveWheels = extractor.From<DriveWheels>("fk_drive_types");
+            item.Gearbox = extractor.From<Gearbox>("fk_gear_box");
+            item.Power = extractor.From<int>("power");
+            item.SteeringWheelLocation = extractor.From<SteeringWheelLocation>("fk_wheel_position");
+            item.OutsideState = extractor.From<string>("outside_condition");
+            item.ExtraFunc = extractor.From<string>("additional_functions");
+            item.Rating = extractor.From<int>("value");
+            item.UserId = extractor.From<int>("fk_user");
+        });
+
+        return car;
+    }
+
+    public static void DeleteUserPreferenceByPreferenceId(int carId)
+    {
+        string adQuery = $@"DELETE FROM car 
+                    WHERE id = ?carId;";
+
+
+        // Execute the query to insert into Ad table
+        Sql.Delete(adQuery, args =>
+        {
+            args.Add("?carId", carId);
+
+        });
+    }
+
     public static void SaveSeenAds(List<SeenAd> seenAds)
     {
         foreach (var seenAd in seenAds)
@@ -462,6 +514,46 @@ public class AdRepo
                 args.Add("?Liked", seenAd.liked);
             });
         }
+    }
+
+    public static long InsertUserPreference(string make, string model, BodyType bodyType, DateTime year, FuelType fuelType,
+     int mileage, string color, DateTime inspection, DriveWheels driveWheels, Gearbox gearbox,
+     int power, SteeringWheelLocation steeringWheelLocation, string outsideState, string extraFunc, float rating, int userId)
+    {
+        int fuelTypeId = GetFuelTypeIdFromEnum(fuelType); // Retrieve the ID from the enum value
+        int bodyTypeId = GetBodyTypeIdFromEnum(bodyType);
+        int driveWheelsId = GetDriveWheelsIdFromEnum(driveWheels);
+        int gearBox = GetGearboxIdFromEnum(gearbox);
+        int steeringwheellocation = GetSteeringIdFromEnum(steeringWheelLocation);
+
+        long carId = 0; // Initialize carId variable
+        // Construct the SQL query for inserting into the Car table
+        string carQuery = $@"INSERT INTO car (make, model, fk_vechicle_type, year, fk_fuel_type, milage, color, technical_inspection, fk_drive_types, fk_gear_box, power, fk_wheel_position, outside_condition, additional_functions, value, fk_user)                  
+                        VALUES (?make, ?model, ?fk_vechicle_type, ?year, ?fk_fuel_type, ?milage, ?color, ?technical_inspection, ?fk_drive_types, ?fk_gear_box, ?power, ?fk_wheel_position, ?outside_condition, ?additional_functions, ?value, ?fk_user);
+                        ";
+
+
+        // Add the parameters to the SQL query
+        carId = Sql.Insert(carQuery, args =>
+        {
+            args.Add("?make", make);
+            args.Add("?model", model);
+            args.Add("?fk_vechicle_type", bodyTypeId); // Assuming you have a foreign key for body type
+            args.Add("?year", year);
+            args.Add("?fk_fuel_type", fuelTypeId); // Assuming you have a foreign key for fuel type
+            args.Add("?milage", mileage);
+            args.Add("?color", color);
+            args.Add("?technical_inspection", inspection);
+            args.Add("?fk_drive_types", driveWheelsId); // Assuming you have a foreign key for drive wheels
+            args.Add("?fk_gear_box", gearBox); // Assuming you have a foreign key for gearbox
+            args.Add("?power", power);
+            args.Add("?fk_wheel_position", steeringwheellocation); // Assuming you have a foreign key for wheel position
+            args.Add("?outside_condition", outsideState);
+            args.Add("?additional_functions", extraFunc);
+            args.Add("?value", rating);
+            args.Add("?fk_user", userId);
+        });
+        return carId; // Return the car ID
     }
 
 
