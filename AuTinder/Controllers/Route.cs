@@ -77,34 +77,7 @@ namespace AuTinder.Controllers
             return DisplayOrderForm(order);
         }
 
-        public IActionResult CancelOrder()
-        {
-
-            if (TempData["Order"] != null)
-            {
-                var orderJson = TempData["Order"].ToString();
-                var order = JsonConvert.DeserializeObject<Order>(orderJson);
-                TempData.Remove("Order");
-                if (_adController.ChangeAdStatus(order.Ad))
-                {
-                    return RedirectToAction("ShowLikedAdList", "Route");
-                }
-            }
-           
-            return RedirectToAction("ShowLikedAdList", "Route");
-
-        }
-
-        public IActionResult CreateOrder()
-        {
-            if (TempData["Order"] != null)
-            {
-                var orderJson = TempData["Order"].ToString();
-                var order = JsonConvert.DeserializeObject<Order>(orderJson);
-                OrderRepo.CreateOrder(order);
-            }
-            return RedirectToAction("ShowLikedAdList", "Route");
-        }
+       
 
         public IActionResult DisplayOrderForm(Order order)
         {
@@ -172,6 +145,7 @@ namespace AuTinder.Controllers
 
         public IActionResult AdEdit(Ad ad)
         {
+            
             bool DataGood = _adController.CheckAdData(ad);
             if (DataGood)
             {
