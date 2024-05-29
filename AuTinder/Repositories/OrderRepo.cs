@@ -18,6 +18,46 @@ namespace AuTinder.Repositories
             });
         }
 
+
+        public static Payment GetPayment(int id)
+        {
+            string query = @"
+        SELECT p.Id, p.Date, p.Paid
+        FROM payment p
+        WHERE p.Id = ?id";
+
+            var rows = Sql.Query(query, args =>
+            {
+                args.Add("?id", id);
+            });
+
+            var payment = Sql.MapOne<Payment>(rows, (extractor, item) =>
+            {
+                item.Id = extractor.From<int>("Id");
+                item.Date = extractor.From<DateTime>("Date");
+                item.Paid = extractor.From<bool>("Paid");
+            });
+
+            return payment;
+        }
+
+        public static void UpdatePayment(int id, Payment payment)
+        {
+            Console.WriteLine(id);
+            string query = @"
+            UPDATE payment
+            SET Date = ?Date,
+                Paid = ?Paid
+            WHERE Id = ?id";
+
+            Sql.Update(query, args =>
+            {
+                args.Add("?id", id);
+                args.Add("?Date", payment.Date);
+                args.Add("?Paid", payment.Paid);
+            });
+        }
+
         public static int GetLastInsertedPaymentId()
         {
             string query = @"
@@ -42,14 +82,16 @@ namespace AuTinder.Repositories
         }
 
 
-        public static void CreateOrder(Order order)
+        public static Order CreateOrder(Order order)
         {
 
             DeliveryRepo.CreateDelivery(order.Delivery);
             int fk_delivery = DeliveryRepo.GetLastInsertedDeliveryId();
+            order.Delivery.Id = fk_delivery;
 
             CreatePayment(order.Payment);
             int fk_payment = GetLastInsertedPaymentId();
+            order.Payment.Id = fk_payment;
 
             string query = @"
                 INSERT INTO orders (Date, fk_order_status, fk_order_type, fk_user, fk_ad, fk_payment, fk_delivery, Price)
@@ -66,6 +108,8 @@ namespace AuTinder.Repositories
                 args.Add("?fk_delivery", fk_delivery);
                 args.Add("?Price", order.Price);// Assuming fk_user is a foreign key to the user table
             });
+
+            return order;
         }
 
         public static List<Order> GetOrders()
