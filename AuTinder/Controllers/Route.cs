@@ -13,11 +13,14 @@ namespace AuTinder.Controllers
         private readonly ILogger<Route> _logger;
         private AdController _adController;
         private OrderController _orderController;
+
+        private UserController _userController;
         private readonly IConfiguration _configuration;
         public Route(ILogger<Route> logger)
         {
             _adController = new AdController();
             _orderController = new OrderController(_configuration);
+            _userController = new UserController();
             _logger = logger;
         }
 
@@ -194,6 +197,32 @@ namespace AuTinder.Controllers
 
             return View("MainView", ads);
         }
+
+        public IActionResult ShowPreferenceView()
+        {
+
+            List<Car> cars = _userController.GetUserPreferences(1);
+
+            return View("PreferenceView", cars);
+        }
+
+        public IActionResult EditPreference(int id)
+        {
+            Car car = _userController.GetUserPreference(id);
+            return View("PreferenceEdit", car);
+        }
+
+        public IActionResult CreatePreference()
+        {
+            return View();
+        }
+
+        public IActionResult UpdatePreference(Car preference)
+        {
+            _userController.UpdateUserPreference(preference);
+            return RedirectToAction("ShowPreferenceView");
+        }
+
 
     }
 }

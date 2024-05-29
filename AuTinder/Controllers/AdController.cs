@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Razor.Compilation;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Security.Cryptography.Pkcs;
 
 namespace AuTinder.Controllers
 {
@@ -150,9 +151,9 @@ namespace AuTinder.Controllers
         public IActionResult GetRecomendedAds()
         {
             List<Ad> ads = AdRepo.GetAllAds();
-            List <SeenAd> seenAds = AdRepo.GetSeenAds(1);
             List<Car> userPreferences = AdRepo.GetUserPreferences(1);
-            List<Ad> unSeenAds = FilterAds(ads, seenAds);
+            List <SeenAd> seenAds = AdRepo.GetSeenAds(1);
+            List<Ad> unSeenAds = FilterSeenAds(ads, seenAds);
             List<Ad> recomendedAds = new List<Ad>();
             EvalueateAds(userPreferences, unSeenAds, recomendedAds, seenAds);
             string adsJson = JsonConvert.SerializeObject(recomendedAds);
@@ -162,7 +163,7 @@ namespace AuTinder.Controllers
             return RedirectToAction("OpenMainView", "Route");
         }
 
-        public List<Ad> FilterAds(List<Ad> ads, List<SeenAd> seenAds)
+        public List<Ad> FilterSeenAds(List<Ad> ads, List<SeenAd> seenAds)
         {
             List<Ad> newlist = new List<Ad>();
             foreach (Ad ad in ads)
@@ -280,6 +281,7 @@ namespace AuTinder.Controllers
 
             return Ok(); // Return a successful response
         }
+
 
 
         #region Automobilio_ivercio_skaiciavimas
