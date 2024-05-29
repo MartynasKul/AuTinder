@@ -35,6 +35,16 @@ namespace AuTinder.Views
         new PartOffer { PartName = "Brake disc", Price = 15, Supplier = "Auto Parts", CategoryID = 3, Make = "pref1", Model = "pref1"},
         new PartOffer { PartName = "Fuel filter", Price = 20, Supplier = "Auto Parts", CategoryID = 4, Make = "pref1", Model = "pref1"},
 
+        new PartOffer { PartName = "Hydraulic oil", Price = 20, Supplier = "Tractor Parts", CategoryID = 1, Make = "Tractor", Model = "Tractor"},
+        new PartOffer { PartName = "Hydraulic oil2", Price = 30, Supplier = "Tractor Parts", CategoryID = 1, Make = "Tractor", Model = "Tractor"},
+
+        new PartOffer { PartName = "Fuel filter", Price = 50, Supplier = "Auto Parts", CategoryID = 1, Make = "Mazda", Model = "Miata"},
+        new PartOffer { PartName = "Oil Filter", Price = 20, Supplier = "Auto Parts", CategoryID = 2, Make = "Mazda", Model = "Miata"},
+
+        new PartOffer { PartName = "Bumper", Price = 10, Supplier = "Auto Parts", CategoryID = 1, Make = "Mazda", Model = "Leon"},
+        new PartOffer { PartName = "Brake pump", Price = 25, Supplier = "Auto Parts", CategoryID = 2, Make = "Mazda", Model = "Leon"},
+        new PartOffer { PartName = "Brake pump", Price = 50, Supplier = "Auto Parts", CategoryID = 2, Make = "Mazda", Model = "Leon"},
+
     };
 
         public async Task<List<PartOffer>> MakeApiRequestForParts(string make, string model)
