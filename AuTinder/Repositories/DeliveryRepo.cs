@@ -72,6 +72,49 @@ namespace AuTinder.Repositories
             return deliveries;
         }
 
+        public static void UpdateDelivery(Delivery delivery, int id)
+        {
+            string query = @"
+            UPDATE delivery
+            SET Duration = ?Duration,
+                fk_delivery_status = ?fk_delivery_status,
+                Length = ?Length,
+                Address_to = ?Address_to,
+                Address_from = ?Address_from
+            WHERE ID = ?id";
+
+            int delivery_Status = GetDeliveryStatusFromEnum(delivery.DeliveryStatus);
+
+            Sql.Update(query, args =>
+            {
+                args.Add("?id", id);
+                args.Add("?Duration", delivery.Duration);
+                args.Add("?fk_delivery_status", delivery_Status); // Assuming DeliveryStatus has an Id property
+                args.Add("?Length", delivery.Length);
+                args.Add("?Address_to", delivery.Address_to);
+                args.Add("?Address_from", delivery.Address_from);
+            });
+        }
+
+        private static int GetDeliveryStatusFromEnum(DeliveryStatus delivery)
+        {
+            switch (delivery)
+            {
+                case DeliveryStatus.Delivered:
+                    return 1; // Assuming 1 is the ID for Gasoline in the fueltypes table
+                case DeliveryStatus.InProgress:
+                    return 2; // Assuming 2 is the ID for Diesel in the fueltypes table
+                case DeliveryStatus.Accepted:
+                    return 3; // Assuming 2 is the ID for Diesel in the fueltypes table
+                case DeliveryStatus.WaitingForDriver:
+                    return 4; // Assuming 2 is the ID for Diesel in the fueltypes table
+                case DeliveryStatus.Cancelled:
+                    return 5;
+                default:
+                    throw new ArgumentException("Unknown fuel type.");
+            }
+        }
+
         private static DeliveryStatus MapToDeliveryStatus(int statusId)
         {
             switch (statusId)

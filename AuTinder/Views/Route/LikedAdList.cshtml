@@ -4,12 +4,6 @@
 
 <h1>LikedAdList</h1>
 
-@if (!string.IsNullOrEmpty(ViewBag.Message))
-{
-    <div class="alert alert-success" role="alert">
-        @ViewBag.Message
-    </div>
-}
 @foreach (Ad ad in Model)
 {
     <div>
@@ -44,9 +38,26 @@
         </dl>
         <div>
             @Html.ActionLink("Details", "LikedAd", new { id = ad.ID }) |
-            @* <a asp-action="Index">Back to List</a> *@
         </div>
     </div>
 
+}
+@if (TempData["OrderResponse"] != null)
+{
+    <script>
+        // Function to display a popup with the order response message
+        function displayOrderResponsePopup() {
+            var orderResponse = "@TempData["OrderResponse"]";
+            alert(orderResponse);
+        }
+
+        // Call the function to display the popup when the page loads
+        window.onload = function () {
+            displayOrderResponsePopup();
+        };
+    </script>
+
+    // Remove TempData after displaying the message
+    TempData.Remove("OrderResponse");
 }
 

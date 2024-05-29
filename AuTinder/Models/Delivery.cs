@@ -3,11 +3,11 @@
 
     public enum DeliveryStatus
     {
-        Cancelled,
-        WaitingForDriver,
-        Accepted,
-        InProgress,
-        Delivered
+        Cancelled = 5,
+        WaitingForDriver = 4,
+        Accepted = 3,
+        InProgress = 2,
+        Delivered = 1
        
     }
     public class Delivery
