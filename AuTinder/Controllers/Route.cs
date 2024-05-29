@@ -99,7 +99,6 @@ namespace AuTinder.Controllers
             Order order_new = new Order();
             if (TempData["Order"] != null)
             {
-                
                 var orderJson = TempData["Order"].ToString();
                 var order = JsonConvert.DeserializeObject<Order>(orderJson);
                 order_new = _orderController.MakeOrderPremium((Order)order);
