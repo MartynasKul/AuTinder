@@ -45,6 +45,19 @@ namespace AuTinder.Controllers
             return View("AdCreateView");
         }
 
+        public IActionResult ShowDelivery()
+        {
+            Delivery delivery = null;
+            if (TempData.ContainsKey("Delivery"))
+            {
+                // Retrieve the JSON string from TempData
+                string deliveryJson = TempData["Delivery"] as string;
+
+                // Deserialize the JSON string back to a list of deliveries
+                delivery = JsonConvert.DeserializeObject<Delivery>(deliveryJson);
+            }
+            return View("DeliveryView", delivery);
+        }
 
         public IActionResult Ad(int id)
         {
@@ -243,6 +256,7 @@ namespace AuTinder.Controllers
         public IActionResult OpenMainView()
         {
             List<Ad> ads = null;
+            List<Delivery> deliveries = null;
 
             if (TempData.ContainsKey("Ads"))
             {
@@ -252,9 +266,23 @@ namespace AuTinder.Controllers
                 // Deserialize the JSON string back to a list of ads
                 ads = JsonConvert.DeserializeObject<List<Ad>>(adsJson);
             }
+            else if (TempData.ContainsKey("Deliveries"))
+            {
+                // Retrieve the JSON string from TempData
+                string deliveriesJson = TempData["Deliveries"] as string;
 
-            return View("MainView", ads);
+                // Deserialize the JSON string back to a list of ads
+                deliveries = JsonConvert.DeserializeObject<List<Delivery>>(deliveriesJson);
+            }
+
+            MainViewModel mvm = new MainViewModel(ads, deliveries);
+
+            return View("MainView", mvm);
         }
 
+        public IActionResult ShowLikedDeliveries()
+        {
+            return View("DeliveryRouteView");
+        }
     }
 }

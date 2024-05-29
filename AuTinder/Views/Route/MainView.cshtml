@@ -1,10 +1,20 @@
-﻿@model List<Ad>
+﻿@model AuTinder.Models.MainViewModel
 
 @{
-    var userId = 1; // Default user ID
+    var userId = 2; // Default user ID
+    var isDriver = UserRepo.IsDriver(userId); // Check if user is a driver
 }
 
-<h1>Recommended Ads</h1>
+@if (isDriver)
+{
+    <h1>Recommended Deliveries</h1>
+}
+else
+{
+    <h1>Recommended Ads</h1>
+}
+
+
 <style>
     #adContainer {
         display: flex;
@@ -18,148 +28,216 @@
         margin: 10px 0; /* Optional: Adds some space between each ad-item */
         width: 80%; /* Adjust width as necessary */
     }
+
+    #deliveryContainer {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .delivery-item {
+        display: block;
+        margin: 10px 0; /* Optional: Adds some space between each ad-item */
+        width: 80%; /* Adjust width as necessary */
+    }
 </style>
 
-<div id="adContainer">
-    @if (Model != null && Model.Any())
-    {
-        foreach (var ad in Model)
-        {
-            <div class="ad-item" data-ad-id="@ad.ID" style="display:none;">
-                <dl class="row">
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Description)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Description)
-                    </dd>
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Price)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Price)
-                    </dd>
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Make)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Make)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Model)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Model)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.BodyType)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.BodyType)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Year)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Year)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.FuelType)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.FuelType)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Mileage)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Mileage)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Color)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Color)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Inspection)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Inspection)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.DriveWheels)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.DriveWheels)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Gearbox)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Gearbox)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Power)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Power)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.SteeringWheelLocation)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.SteeringWheelLocation)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.OutsideState)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.OutsideState)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.ExtraFunc)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.ExtraFunc)
-                    </dd>
-
-                    <dt class="col-sm-2">
-                        @Html.DisplayNameFor(model => ad.Car.Rating)
-                    </dt>
-                    <dd class="col-sm-10">
-                        @Html.DisplayFor(model => ad.Car.Rating)
-                    </dd>
-                </dl>
-                <button class="btn btn-success like-btn">Like</button>
-                <button class="btn btn-danger dislike-btn">Dislike</button>
-            </div>
-        }
-    }
-</div>
-
-@if (Model == null || !Model.Any())
+@if (isDriver)
 {
-    <a class="nav-link text-dark" asp-area="" asp-controller="Ad" asp-action="GetRecomendedAds">Show Ads</a>
+    <div id="deliveryContainer">
+        @if (Model.Deliveries != null && Model.Deliveries.Any())
+        {
+            foreach (var delivery in Model.Deliveries)
+            {
+                <div class="delivery-item" data-delivery-id="@delivery.Id" style="display:none;">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => delivery.AddressFrom)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => delivery.AddressFrom)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => delivery.AddressTo)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => delivery.AddressTo)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => delivery.Length)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => delivery.Length)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => delivery.Order.Price)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => delivery.Order.Price)
+                        </dd>
+                    </dl>
+                    <button class="btn btn-success like-btn">Like</button>
+                    <button class="btn btn-danger dislike-btn">Dislike</button>
+                </div>
+            }
+        }
+    </div>
+}
+else
+{
+    <div id="adContainer">
+        @if (Model.Ads != null && Model.Ads.Any())
+        {
+            foreach (var ad in Model.Ads)
+            {
+                <div class="ad-item" data-ad-id="@ad.ID" style="display:none;">
+                    <dl class="row">
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Description)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Description)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Price)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Price)
+                        </dd>
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Make)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Make)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Model)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Model)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.BodyType)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.BodyType)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Year)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Year)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.FuelType)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.FuelType)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Mileage)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Mileage)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Color)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Color)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Inspection)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Inspection)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.DriveWheels)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.DriveWheels)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Gearbox)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Gearbox)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Power)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Power)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.SteeringWheelLocation)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.SteeringWheelLocation)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.OutsideState)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.OutsideState)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.ExtraFunc)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.ExtraFunc)
+                        </dd>
+
+                        <dt class="col-sm-2">
+                            @Html.DisplayNameFor(model => ad.Car.Rating)
+                        </dt>
+                        <dd class="col-sm-10">
+                            @Html.DisplayFor(model => ad.Car.Rating)
+                        </dd>
+                    </dl>
+                    <button class="btn btn-success like-btn">Like</button>
+                    <button class="btn btn-danger dislike-btn">Dislike</button>
+                </div>
+            }
+        }
+    </div>
+}
+
+@if (Model.Ads == null || !Model.Ads.Any() || Model.Deliveries == null || !Model.Deliveries.Any())
+{
+    if (isDriver)
+    {
+        <a class="nav-link text-dark" asp-area="" asp-controller="Delivery" asp-action="GetRecomendedDeliveries">Show Deliveries</a>
+    }
+    else
+    {
+        <a class="nav-link text-dark" asp-area="" asp-controller="Ad" asp-action="GetRecomendedAds">Show Ads</a>
+    }
 }
 
 <script>
     let currentIndex = 0;
+
     let ads = document.querySelectorAll('.ad-item');
     let seenAds = [];
+
+    let deliveries = document.querySelectorAll('.delivery-item');
+    let seenDeliveries = [];
 
     function showNextAd() {
         if (ads.length === 0) return; // No ads to display
@@ -171,7 +249,7 @@
         }
     }
 
-    function handleButtonClick(liked) {
+    function handleAdButtonClick(liked) {
         let adElement = ads[currentIndex];
         let adId = adElement.getAttribute('data-ad-id');
         seenAds.push({
@@ -206,19 +284,58 @@
         }
     }
 
+    function showNextDelivery() {
+        if (deliveries.length === 0) return; // No ads to display
+
+        if (currentIndex < deliveries.length) {
+            deliveries[currentIndex].style.display = 'block';
+        } else {
+            saveDeliveries();
+        }
+    }
+
+
+    function handleDeliveryButtonClick(liked) {
+        let deliveryElement = deliveries[currentIndex];
+        let deliveryId = deliveryElement.getAttribute('data-delivery-id');
+        seenDeliveries.push({
+            UserId: @userId,
+            DeliveryId: deliveryId,
+            liked: liked
+        });
+        deliveryElement.style.display = 'none';
+        currentIndex++;
+        showNextDelivery();
+    }
+
     document.addEventListener('DOMContentLoaded', function () {
         if (ads.length > 0) {
             showNextAd();
 
             document.querySelectorAll('.like-btn').forEach(button => {
                 button.addEventListener('click', function () {
-                    handleButtonClick(true);
+                    handleAdButtonClick(true);
                 });
             });
 
             document.querySelectorAll('.dislike-btn').forEach(button => {
                 button.addEventListener('click', function () {
-                    handleButtonClick(false);
+                    handleAdButtonClick(false);
+                });
+            });
+        }
+        else if (deliveries.length > 0) {
+            showNextDelivery();
+
+            document.querySelectorAll('.like-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    handleDeliveryButtonClick(true);
+                });
+            });
+
+            document.querySelectorAll('.dislike-btn').forEach(button => {
+                button.addEventListener('click', function () {
+                    handleDeliveryButtonClick(false);
                 });
             });
         }
