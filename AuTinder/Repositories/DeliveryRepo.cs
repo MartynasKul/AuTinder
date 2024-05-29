@@ -502,5 +502,61 @@ namespace AuTinder.Repositories
 
             return seenDeliveries;
         }
+
+        public static void AddDeliveyToRoute(int deliveyId, int userID, int routeStatus)
+        {
+            string query = @"
+                    INSERT INTO Route (fk_routestatus, fk_delivery, fk_user)
+                    VALUES (?RouteStatus, ?DeliveryId, ?userId);";
+
+            Sql.Insert(query, args =>
+            {
+                args.Add("?RouteStatus", routeStatus);
+                args.Add("?DeliveryId", deliveyId);
+                args.Add("?userId", userID);
+            });
+        }
+
+        public static DeliveryRoute GetRouteForFinalDelivery(int userId)
+        {
+
+            string query = @"
+                SELECT fk_delivery
+                FROM route
+                WHERE fk_user = ?userId AND fk_routestatus = ?status;";
+
+            var rows = Sql.Query(query, args =>
+            {
+                args.Add("?userId", userId);
+                args.Add("?status", 2);
+            });
+            List<DeliveryRoute> routes = Sql.MapAll<DeliveryRoute>(rows, (extractor, item) =>
+            {
+                item.DeliveryId = extractor.From<int>("fk_delivery");
+            });
+
+            List<Delivery> deliveries = new List<Delivery>();
+
+            foreach (DeliveryRoute rout in routes)
+            {
+                deliveries.Add(GetDelivery(rout.DeliveryId));
+            }
+            DeliveryRoute route = new DeliveryRoute(deliveries);
+            return route;
+        }
+
+        public static void updateDeliveryRoute(int userId)
+        {
+            string query = @"
+            UPDATE route
+            SET fk_routestatus = ?status
+            WHERE fk_user = ?userId";
+
+            Sql.Update(query, args =>
+            {
+                args.Add("?userId", userId);
+                args.Add("?status", 1);
+            });
+        }
     }
 }

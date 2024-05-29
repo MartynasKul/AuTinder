@@ -6,6 +6,7 @@ using K4os.Compression.LZ4.Internal;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Org.BouncyCastle.Bcpg;
 
 namespace AuTinder.Controllers
 {
@@ -157,5 +158,26 @@ namespace AuTinder.Controllers
 
             return Ok(); // Return a successful response
         }
+
+        public IActionResult AddDeliveryToRoute(int id)
+        {
+            DeliveryRoute route = DeliveryRepo.GetRouteForFinalDelivery(2);
+            foreach (Delivery delivery in route.Deliveries)
+            {
+                if (delivery.Id == id)
+                {
+                    return RedirectToAction("GetLikedDeliveries", "Route");
+                }
+            }
+            DeliveryRepo.AddDeliveyToRoute(id, 2, 2);
+            return RedirectToAction("GetLikedDeliveries", "Route");
+        }
+
+        //public IActionResult StartFinalDelivery()
+        //{
+        //    int userid = 2;
+        //    DeliveryRoute route = DeliveryRepo.GetRouteForFinalDelivery(userid);
+        //    return View("FinalDeliveryView", "Route");
+        //}
     }
 }

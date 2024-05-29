@@ -281,5 +281,18 @@ namespace AuTinder.Controllers
         {
             return View("DeliveryRouteView");
         }
+
+        public IActionResult StartFinalDelivery()
+        {
+            int userid = 2;
+            DeliveryRoute route = DeliveryRepo.GetRouteForFinalDelivery(userid);
+            return View("FinalDeliveryView", route.Deliveries);
+        }
+
+        public IActionResult EndRoute()
+        {
+            DeliveryRepo.updateDeliveryRoute(2);
+            return View("index");
+        }
     }
 }
