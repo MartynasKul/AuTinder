@@ -51,8 +51,7 @@ namespace AuTinder.Controllers
         public async Task<(double distance, int durationHours)> GetDistanceAndDuration(string address_from, string address_to)
         {
             // Replace 'YOUR_API_KEY' with your actual API key
-            string apiKey = "YOUR_API_KEY";
-
+            string apiKey = "AIzaSyBhXXLqtEuPoqNOWZZ4OqkNq4ptNREb2Zs";
             string origin = address_from;
             string destination = address_to;
 
