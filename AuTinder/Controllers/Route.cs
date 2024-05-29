@@ -13,14 +13,15 @@ namespace AuTinder.Controllers
         private readonly ILogger<Route> _logger;
         private AdController _adController;
         private OrderController _orderController;
-
         private UserController _userController;
+        private DeliveryController _deliveryController;
         private readonly IConfiguration _configuration;
         public Route(ILogger<Route> logger)
         {
             _adController = new AdController();
             _orderController = new OrderController(_configuration);
             _userController = new UserController();
+            _deliveryController = new DeliveryController();
             _logger = logger;
         }
 
@@ -50,6 +51,19 @@ namespace AuTinder.Controllers
             return View("AdCreateView");
         }
 
+        public IActionResult ShowDelivery()
+        {
+            Delivery delivery = null;
+            if (TempData.ContainsKey("Delivery"))
+            {
+                // Retrieve the JSON string from TempData
+                string deliveryJson = TempData["Delivery"] as string;
+
+                // Deserialize the JSON string back to a list of deliveries
+                delivery = JsonConvert.DeserializeObject<Delivery>(deliveryJson);
+            }
+            return View("DeliveryView", delivery);
+        }
 
         public IActionResult Ad(int id)
         {
@@ -63,10 +77,30 @@ namespace AuTinder.Controllers
             return View(ad);
         }
 
+        // This action displays the details of a single liked delivery
+        public IActionResult LikedDelivery(int deliveryId)
+        {
+            var delivery = DeliveryRepo.GetDelivery(deliveryId);
+            if (delivery == null)
+            {
+                return NotFound();
+            }
+
+            var seenDelivery = new SeenDelivery
+            {
+                DeliveryId = delivery.Id,
+                UserId = 1, // Replace with logic to get the current user's ID
+                liked = true, // Determine if the user liked this delivery
+                Delivery = delivery
+            };
+
+            return View(seenDelivery);
+        }
+
         public IActionResult OpenOrderForm(int id)
         {
             Ad ad = AdRepo.GetAdAndCarById(id);
-            if(_adController.ConfirmAdStatus(ad) == false)
+            if (_adController.ConfirmAdStatus(ad) == false)
             {
                 ad.IsOrdered = true;
                 return ShowOrderForm(ad);
@@ -130,6 +164,12 @@ namespace AuTinder.Controllers
             Console.WriteLine(1);
             return View("LikedAdLIst", ads);
         }
+        public IActionResult GetLikedDeliveries() 
+        {
+            List<SeenDelivery> del = _deliveryController.ShowLikedDeliveries();
+
+            return View("LikedDeliveries", del);
+        }
 
         public IActionResult ShowOrderList()
         {
@@ -184,6 +224,8 @@ namespace AuTinder.Controllers
         public IActionResult OpenMainView()
         {
             List<Ad> ads = null;
+            List<Delivery> deliveries = null;
+
             if (TempData.ContainsKey("NoAds"))
             {
                 ViewBag.NoAds = TempData["NoAds"];
@@ -196,8 +238,18 @@ namespace AuTinder.Controllers
                 // Deserialize the JSON string back to a list of ads
                 ads = JsonConvert.DeserializeObject<List<Ad>>(adsJson);
             }
+            else if (TempData.ContainsKey("Deliveries"))
+            {
+                // Retrieve the JSON string from TempData
+                string deliveriesJson = TempData["Deliveries"] as string;
 
-            return View("MainView", ads);
+                // Deserialize the JSON string back to a list of ads
+                deliveries = JsonConvert.DeserializeObject<List<Delivery>>(deliveriesJson);
+            }
+
+            MainViewModel mvm = new MainViewModel(ads, deliveries);
+
+            return View("MainView", mvm);
         }
 
         public IActionResult ShowPreferenceView()
@@ -225,6 +277,9 @@ namespace AuTinder.Controllers
             return RedirectToAction("ShowPreferenceView");
         }
 
-
+        public IActionResult ShowLikedDeliveries()
+        {
+            return View("DeliveryRouteView");
+        }
     }
 }

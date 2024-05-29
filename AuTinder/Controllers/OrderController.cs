@@ -64,9 +64,9 @@ namespace AuTinder.Controllers
             order.Date = DateTime.Now;
             order.OrderStatus = OrderStatus.PendingPayment;
             Delivery delivery = new Delivery();
-            delivery.DeliveryStatus = DeliveryStatus.WaitingForDriver;
-            delivery.Address_from = ad.Address;
-            delivery.Address_to = "User adress here hehe";
+            delivery.Status = Delivery.DeliveryStatus.WaitingForDriver;
+            delivery.AddressFrom = ad.Address;
+            delivery.AddressTo = "User adress here hehe";
             AuTinder.Models.Payment payment = new AuTinder.Models.Payment();
             payment.Paid = false;
             payment.Date = DateTime.Now;
@@ -78,8 +78,8 @@ namespace AuTinder.Controllers
             int dis = Convert.ToInt32(distance);
             delivery.Duration = duration;
             delivery.Length = dis;
-            delivery.Address_from = ad.Address;
-            delivery.Address_to = user.Address;
+            delivery.AddressFrom = ad.Address;
+            delivery.AddressTo = user.Address;
             order.Delivery = delivery;
             order.Payment = payment;
             order.AverageTime = _timeController.GetAverageTime(order).Result;

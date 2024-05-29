@@ -1,4 +1,4 @@
-using AuTinder.Models;
+﻿using AuTinder.Models;
 using Microsoft.AspNetCore.DataProtection.KeyManagement;
 using Microsoft.Extensions.Configuration;
 using System.Collections.Generic;
@@ -61,6 +61,7 @@ public class AdRepo
 
     private static void InsertAd(string description, decimal price, bool isOrdered, long carId)
     {
+        
         string adQuery = $@"INSERT INTO ad (Description, Price, Ordered, Fk_Car, fk_user, Address)
                            VALUES (?Description, ?Price, ?Ordered, ?Fk_Car, ?fk_user, ?Address);";
 
@@ -72,7 +73,7 @@ public class AdRepo
             args.Add("?Ordered", isOrdered);
             args.Add("?Fk_Car", carId);
             args.Add("?fk_user", 1); // Assuming fk_user is a foreign key to the user table
-            args.Add("?Address", "To be implemented");
+            args.Add("?Address", "Respublikos g. 49, Telšiai, 87130 Telšių r. sav.");
         });
     }
 
