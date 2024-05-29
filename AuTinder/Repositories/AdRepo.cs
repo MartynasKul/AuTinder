@@ -316,6 +316,7 @@ public class AdRepo
             item.Description = extractor.From<string>("Description");
             item.Price = extractor.From<decimal>("Price");
             item.IsOrdered = extractor.From<bool>("Ordered");
+            item.Address = extractor.From<string>("Address");
             item.Car = new Car
             {
                 Id = extractor.From<int>("CarId"),
@@ -335,7 +336,7 @@ public class AdRepo
                 ExtraFunc = extractor.From<string>("additional_functions"),
                 Rating = Convert.ToSingle(extractor.From<decimal>("value"))
             };
-            item.Address = extractor.From<string>("Address");
+            
         });
 
         return adsWithCars;

@@ -86,7 +86,8 @@ namespace AuTinder.Controllers
 
         public IActionResult DisplayOrderForm(Order order)
         {
-
+            TempData["Address_To"] = UserRepo.GetUserById(1).Address;
+            TempData["Address_From"] = order.Ad.Address;
             return View("CreateOrder", order);
         }
 
@@ -95,9 +96,12 @@ namespace AuTinder.Controllers
             Order order_new = new Order();
             if (TempData["Order"] != null)
             {
+                
                 var orderJson = TempData["Order"].ToString();
                 var order = JsonConvert.DeserializeObject<Order>(orderJson);
                 order_new = _orderController.MakeOrderPremium((Order)order);
+                TempData["Address_To"] = UserRepo.GetUserById(1).Address;
+                TempData["Address_From"] = order_new.Ad.Address;
                 TempData["Order"] = JsonConvert.SerializeObject(order_new);
             }
             return View("CreateOrder", order_new);

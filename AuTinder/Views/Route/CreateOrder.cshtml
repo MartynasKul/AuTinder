@@ -39,3 +39,60 @@
     <a href="@Url.Action("AddOrder", "Order")">Create Order</a>
 </div>
 
+<style>
+    #map {
+        height: 600px;
+        width: 100%;
+    }
+</style>
+<body>
+    <div id="map"></div>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBhXXLqtEuPoqNOWZZ4OqkNq4ptNREb2Zs&libraries=places&callback=initMap" async defer></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function initMap() {
+            var directionsService = new google.maps.DirectionsService();
+            var directionsRenderer = new google.maps.DirectionsRenderer();
+            var map = new google.maps.Map(document.getElementById('map'), {
+                zoom: 7,
+                center: { lat: 41.85, lng: -87.65 } // Default center (Chicago)
+            });
+            directionsRenderer.setMap(map);
+
+            var start = '@TempData["Address_From"]';
+            var end = '@TempData["Address_To"]';
+            var request = {
+                origin: start,
+                destination: end,
+                travelMode: 'DRIVING'
+            };
+            directionsService.route(request, function (result, status) {
+                if (status == 'OK') {
+                    directionsRenderer.setDirections(result);
+                    var route = result.routes[0].legs[0];
+                    var distance = route.distance.text;
+                    var duration = route.duration.text;
+                    document.getElementById('distance').innerText = route.distance.text;
+                    document.getElementById('duration').innerText = route.duration.text;
+
+                    $.ajax({
+                        type: 'POST',
+                        url: '@Url.Action("StoreRouteInfo", "Map")',
+                        data: {
+                            distance: distance,
+                            duration: duration
+                        },
+                        success: function (response) {
+                            console.log('Data sent successfully');
+                        },
+                        error: function (error) {
+                            console.log('Error sending data: ', error);
+                        }
+                    });
+                }
+            });
+
+        }
+    </script>
+</body>
+
