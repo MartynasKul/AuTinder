@@ -111,11 +111,13 @@ namespace AuTinder.Controllers
 
         public IActionResult AddOrder()
         {
+            
             AuTinder.Models.Order order = new AuTinder.Models.Order();
             if (TempData["Order"] != null)
             {
                 var orderJson = TempData["Order"].ToString();
                 order = JsonConvert.DeserializeObject<AuTinder.Models.Order>(orderJson);
+                AdRepo.UpdateAd(order.Ad.ID, order.Ad.Description, order.Ad.Price, order.Ad.IsOrdered);
                 order = OrderRepo.CreateOrder(order);
                 order.Id = OrderRepo.GetLastInsertedOrderId();
                 TempData["Order"] = JsonConvert.SerializeObject(order);

@@ -38,8 +38,6 @@ namespace AuTinder.Controllers
         {
             if (ad.IsOrdered == false)
             {
-                ad.IsOrdered = true;
-                AdRepo.UpdateAd(ad.ID, ad.Description, ad.Price, ad.IsOrdered);
                 return false;
             }
             return true;

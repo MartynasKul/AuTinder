@@ -65,6 +65,7 @@ namespace AuTinder.Controllers
             Ad ad = AdRepo.GetAdAndCarById(id);
             if(_adController.ConfirmAdStatus(ad) == false)
             {
+                ad.IsOrdered = true;
                 return ShowOrderForm(ad);
             }
             return RedirectToAction("ShowLikedAdList", "Route");
@@ -77,10 +78,15 @@ namespace AuTinder.Controllers
             return DisplayOrderForm(order);
         }
 
-       
+        public IActionResult CancelOrder()
+        {
+            TempData.Remove("Order");
+            return RedirectToAction("ShowLikedAdList", "Route");
+        }
 
         public IActionResult DisplayOrderForm(Order order)
         {
+
             return View("CreateOrder", order);
         }
 
