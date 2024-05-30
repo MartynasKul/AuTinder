@@ -41,6 +41,10 @@
             <!-- Add more delivery details as needed -->
         </dl>
     </div>
+    <div>
+        @Html.ActionLink("Remove from route", "RemoveFromRoute", "Delivery", new { deliveryId = delivery.Id }, new { @class = "btn btn-danger" })
+        <br />
+    </div>
     
 }
 
