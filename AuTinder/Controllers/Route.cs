@@ -292,7 +292,11 @@ namespace AuTinder.Controllers
         public IActionResult EndRoute()
         {
             DeliveryRepo.updateDeliveryRoute(2);
-            return View("index");
+
+
+            List<SeenDelivery> del = _deliveryController.ShowLikedDeliveries();
+
+            return View("LikedDeliveries", del);
         }
     }
 }

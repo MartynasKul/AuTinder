@@ -179,5 +179,13 @@ namespace AuTinder.Controllers
         //    DeliveryRoute route = DeliveryRepo.GetRouteForFinalDelivery(userid);
         //    return View("FinalDeliveryView", "Route");
         //}
+
+
+        public IActionResult RemoveFromRoute(int deliveryID) 
+        {
+            DeliveryRepo.RemoveDeliveryFromRoute(deliveryID);
+
+            return RedirectToAction("StartFinalDelivery", "Route");
+        }
     }
 }
