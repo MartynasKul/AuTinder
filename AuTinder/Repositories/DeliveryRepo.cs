@@ -558,5 +558,17 @@ namespace AuTinder.Repositories
                 args.Add("?status", 1);
             });
         }
+
+        public static void RemoveDeliveryFromRoute(int deliveryID) 
+        {
+            string query = @"
+                DELETE FROM route
+                WHERE fk_delivery = ?deliveryId";
+
+            Sql.Delete(query, args =>
+            {
+                args.Add("?deliveryId", deliveryID);
+            });
+        }
     }
 }
